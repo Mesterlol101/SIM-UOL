@@ -35,6 +35,5 @@ std::cout << "        1980/01           1980/02          1980/03     " << std::e
 }
 
 int main(){
-    print_plot();
-    return 0;
+    print_lineplot();
 }
