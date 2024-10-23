@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<root>
+	<name type="str">I am James Bond</name>
+	<age type="int">38</age>
+	<isAccountant type="bool">false</isAccountant>
+	<hobby type="list">
+		<item type="str">basketball</item>
+		<item type="str">swimming</item>
+		<item type="str">diving</item>
+	</hobby>
+	<children type="null"/>
+	<friends type="list">
+		<item type="dict">
+			<name type="str">John</name>
+			<age type="int">44</age>
+			<isAccountant type="bool">true</isAccountant>
+		</item>
+	</friends>
+</root>
