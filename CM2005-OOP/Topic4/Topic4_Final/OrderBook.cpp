@@ -1,5 +1,6 @@
 #include "OrderBook.h"
 #include "CSVReader.h"
+#include <algorithm>
 #include <map>
 
 // constructors, reading a csv data file
