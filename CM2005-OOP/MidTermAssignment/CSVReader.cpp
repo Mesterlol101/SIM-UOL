@@ -9,7 +9,6 @@ CSVReader::CSVReader()
 
 std::vector<std::vector<std::string>> CSVReader::LoadCSVData(std::string csvFile){
     // Define a 2D array to store the CSV data
-    //auto data = new std::string [rows][columns];
     std::vector<std::vector<std::string>> data;
     std::string line, cell;
     int count = 0;
@@ -17,7 +16,7 @@ std::vector<std::vector<std::string>> CSVReader::LoadCSVData(std::string csvFile
     std::ifstream dataFile{csvFile};
     if (dataFile.is_open()){    
 
-        std::cout << "CSV has been opened" << std::endl;
+        // std::cout << "CSV has been opened" << std::endl;
 
         while (std::getline(dataFile, line)) {
             std::vector<std::string> row;
@@ -34,6 +33,14 @@ std::vector<std::vector<std::string>> CSVReader::LoadCSVData(std::string csvFile
         std::cout << "Number of rows processed : " << count << std::endl;
         std::cout << "CSV has been closed." << std::endl;
         std::cout << "Temperature Data has been loaded." << std::endl;
+
+        std::cout << "First 5 rows of the data:" << std::endl;
+        for (int i = 0; i < std::min(5, static_cast<int>(data.size())); ++i) {
+            for (const auto& cell : data[i]) {
+                std::cout << cell << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     return data;
 }

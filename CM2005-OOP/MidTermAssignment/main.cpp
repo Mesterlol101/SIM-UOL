@@ -1,7 +1,8 @@
-#include "MerkelMain.h"
+#include "AppMain.h"
 
+// g++ -o main.exe -I alglib-cpp *.cpp alglib-cpp/src/*.cpp to compile
 int main()
 {
-    MerkelMain app{};
-    app.init();
+     AppMain app{};
+     app.init();
 }
