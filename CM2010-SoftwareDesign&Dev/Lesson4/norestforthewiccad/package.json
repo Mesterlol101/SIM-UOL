@@ -1,0 +1,20 @@
+{
+  "name": "norestforthewiccad",
+  "version": "1.0.0",
+  "description": "RESTful API for witches and wizards",
+  "main": "index.js",
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "chai": "^5.1.2",
+    "chai-http": "^5.1.1",
+    "express": "^4.17.1",
+    "mocha": "^10.8.2",
+    "nodemon": "^3.1.7"
+  },
+  "scripts": {
+  "test": "./node_modules/bin/mocha",
+  "app": "./node_modules/nodemon/bin/nodemon.js index.js"
+  }
+
+}
