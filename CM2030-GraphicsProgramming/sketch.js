@@ -44,8 +44,6 @@ function draw() {
     }
 }
 
-
-
 function drawTable() {
     // Draw floor
     fill("#266809");
@@ -163,7 +161,6 @@ function addPockets() {
     ];
     World.add(engine.world, pockets);
 }
-
 
 
 // Function to draw balls on the table
@@ -378,3 +375,20 @@ function addCollisionEvents() {
         }
     });
 }
+
+// --------------------------------Commentary Section------------------------------
+
+// I attempted to develop this snooker application as with the aesthetics and design specifications given in the assignment brief.
+// First I drew the table floor and railings using the rect function and fill to match the colors. Then I drew the pocket edges.
+// Now with the pocket edges, I drew the actual pockets using ellipse. The next thing is to draw the head string and the D region. I did this by drawing a line that stretches most of the table height and an arc with no fill for the semi-circle. 
+// Last part is to draw the cushions. To do this I needed to make the trapezoid bodies first, then I would have the vertices to draw the shapes out using beginShape() and endShape()
+
+// With the table drawn, I now need to add in the parts of the table that the balls can interact with. This involves adding Bodies for the cushions and the pockets. 
+// I also ended up adding a body for the railings too just for good measure
+
+// Now that the whole table was set up, It was time to add in all the balls. For the size of the balls, the assignment brief recommended the diameter to be table width / 36. I standardized using table width / 72 as all of the functions took the radius of the circle.
+// To draw the balls on the table, I used a function containing a for loop that iterates through an array of ball objects, fills the color with the object's fillStyle with white as a fall back, and creates an ellipse with the ball's position and radius.
+
+// Next in line was to make the functions related to the cue ball. I was unable to make a cue stick that collides with the cue ball so I did the slingshot style using mouse interaction. I added in the ball placement preview that starts the game when placed. I also added a check to see if the ball was still moving to prevent it from being hit again untill it stopped
+
+// Lastly, I needed to initialize the ball objects according to the gamemode 1,2 or 3 and give the ball collision events between balls and the pocket. It inclued the snooker rules where you can only pocket 1 colored ball after pocketing a red ball and placing it back of wrongly pocketed. The replacement of the cue ball is added here too
