@@ -1,1 +1,13 @@
-vcpkg/
+## General Ignores
+*.vs
+*.tar
+*.zip
+**/vcpkg
+
+## CM2005-OOP Ignores
+**.vscode
+**/.DS_Store
+merklerex_midterm
+Midterm-apr2024
+*.jucer
+**/CM2005-OOP/Topic10/OtoDecks_Final/Builds
