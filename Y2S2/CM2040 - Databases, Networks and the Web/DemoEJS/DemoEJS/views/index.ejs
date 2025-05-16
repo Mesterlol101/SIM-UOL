@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Welcome to <%= title %></h1>
+
+  <!-- Conditional Greeting -->
+  <% if (isLoggedIn) { %>
+    <div class="status logged-in">
+      <p>🍀 Hello, <strong><%= username %></strong>! Here's your exclusive fruit list:</p>
+    </div>
+  <% } else { %>
+    <div class="status guest">
+      <p>🔒 You’re not logged in. Here’s a default fruit list:</p>
+    </div>
+  <% } %>
+
+  <h2>Fruit List</h2>
+  <ul>
+    <% items.forEach(function(item, index) { %>
+      <li><%= index + 1 %>. <%= item %></li>
+    <% }); %>
+  </ul>
+</body>
+</html>
