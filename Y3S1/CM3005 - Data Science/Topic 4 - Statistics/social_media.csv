@@ -1,0 +1,1001 @@
+id,pref_service,gender,age
+1,Platform B,Male,65
+2,Platform A,Male,74
+3,Platform B,Undisclosed,49
+4,Platform C,Male,75
+5,Platform A,Male,56
+6,Platform A,Female,19
+7,Platform C,Female,21
+8,Platform C,Male,73
+9,Platform A,Undisclosed,50
+10,Platform B,Male,56
+11,Platform C,Male,41
+12,Platform A,Male,54
+13,Platform A,Female,57
+14,Platform A,Male,68
+15,Platform A,Female,55
+16,Other,Male,67
+17,Platform C,Male,79
+18,Platform A,Male,47
+19,Platform C,Male,43
+20,Platform A,Female,20
+21,Platform B,Female,72
+22,Other,Male,51
+23,Platform C,Male,30
+24,Platform B,Male,74
+25,Platform A,Undisclosed,59
+26,Platform B,Male,72
+27,Platform A,Female,51
+28,Platform A,Male,70
+29,Platform C,Male,76
+30,Platform A,Male,43
+31,Platform B,Male,32
+32,Platform C,Male,58
+33,Platform A,Undisclosed,31
+34,Platform B,Female,69
+35,Platform A,Female,20
+36,Platform C,Male,20
+37,Other,Male,45
+38,Platform A,Female,60
+39,Platform C,Male,76
+40,Platform B,Female,71
+41,Platform C,Female,65
+42,Platform C,Female,79
+43,Platform B,Female,69
+44,Platform A,Female,54
+45,Platform A,Female,34
+46,Platform B,Male,71
+47,Platform C,Female,74
+48,Platform A,Female,34
+49,Platform A,Male,61
+50,Platform C,Female,25
+51,Other,Male,35
+52,Platform C,Female,57
+53,Platform B,Male,68
+54,Platform B,Female,33
+55,Platform B,Male,51
+56,Platform B,Female,36
+57,Platform A,Undisclosed,71
+58,Platform A,Male,72
+59,Platform A,Female,49
+60,Platform B,Female,56
+61,Platform B,Male,20
+62,Platform B,Male,28
+63,Platform C,Female,47
+64,Platform A,Male,43
+65,Other,Male,35
+66,Other,Male,26
+67,Platform C,Female,30
+68,Platform B,Male,45
+69,Platform B,Female,55
+70,Platform A,Female,79
+71,Platform A,Female,52
+72,Platform A,Undisclosed,42
+73,Platform A,Female,65
+74,Other,Female,67
+75,Other,Female,48
+76,Platform B,Undisclosed,56
+77,Platform C,Male,31
+78,Platform B,Female,73
+79,Platform A,Female,69
+80,Platform B,Female,60
+81,Platform B,Female,32
+82,Platform A,Undisclosed,45
+83,Platform B,Female,62
+84,Other,Male,43
+85,Platform B,Female,37
+86,Platform B,Male,34
+87,Platform C,Female,41
+88,Platform C,Female,23
+89,Platform B,Male,64
+90,Platform C,Male,77
+91,Platform B,Male,76
+92,Platform A,Male,47
+93,Platform A,Female,19
+94,Platform B,Male,38
+95,Platform B,Female,20
+96,Platform C,Male,44
+97,Platform A,Male,60
+98,Platform C,Female,22
+99,Platform A,Undisclosed,64
+100,Platform C,Female,37
+101,Platform C,Female,51
+102,Platform C,Male,31
+103,Platform C,Male,42
+104,Platform B,Male,61
+105,Platform C,Undisclosed,40
+106,Platform C,Female,20
+107,Platform C,Undisclosed,57
+108,Other,Male,18
+109,Other,Female,37
+110,Platform A,Male,78
+111,Platform A,Female,64
+112,Platform A,Female,68
+113,Other,Female,78
+114,Other,Female,64
+115,Platform A,Female,29
+116,Platform B,Undisclosed,25
+117,Platform B,Male,29
+118,Platform A,Male,48
+119,Platform B,Male,20
+120,Platform C,Male,65
+121,Platform B,Male,28
+122,Platform C,Female,61
+123,Platform B,Female,55
+124,Platform A,Undisclosed,78
+125,Platform B,Female,68
+126,Platform B,Female,25
+127,Platform B,Undisclosed,38
+128,Platform B,Female,38
+129,Platform B,Female,20
+130,Platform B,Male,57
+131,Platform A,Male,27
+132,Platform A,Undisclosed,46
+133,Other,Undisclosed,29
+134,Platform A,Undisclosed,55
+135,Platform A,Undisclosed,57
+136,Platform A,Female,71
+137,Platform B,Male,59
+138,Other,Female,71
+139,Other,Female,21
+140,Other,Female,35
+141,Platform A,Male,70
+142,Platform C,Female,75
+143,Platform B,Male,26
+144,Platform A,Female,75
+145,Other,Female,22
+146,Platform A,Male,62
+147,Other,Female,63
+148,Platform B,Male,37
+149,Platform A,Female,74
+150,Platform B,Male,66
+151,Platform A,Male,27
+152,Platform B,Male,58
+153,Platform B,Female,64
+154,Platform C,Female,70
+155,Platform B,Female,42
+156,Platform B,Female,73
+157,Platform B,Female,41
+158,Platform B,Male,25
+159,Platform B,Male,78
+160,Platform B,Female,60
+161,Platform A,Female,61
+162,Platform B,Female,30
+163,Platform B,Male,24
+164,Platform C,Female,79
+165,Platform C,Undisclosed,67
+166,Platform C,Male,54
+167,Platform B,Male,19
+168,Platform B,Male,44
+169,Platform C,Male,78
+170,Platform C,Undisclosed,78
+171,Platform A,Female,65
+172,Platform A,Male,73
+173,Platform B,Male,24
+174,Platform A,Male,48
+175,Other,Female,54
+176,Platform C,Female,67
+177,Platform B,Female,67
+178,Platform A,Male,36
+179,Platform A,Male,36
+180,Other,Male,18
+181,Platform C,Female,63
+182,Platform C,Male,51
+183,Platform B,Male,36
+184,Platform A,Undisclosed,38
+185,Platform A,Female,41
+186,Platform C,Male,23
+187,Platform B,Male,70
+188,Platform C,Female,77
+189,Platform C,Male,41
+190,Platform A,Male,18
+191,Platform A,Male,73
+192,Platform C,Male,36
+193,Other,Male,77
+194,Other,Male,20
+195,Platform B,Female,76
+196,Platform C,Female,62
+197,Platform C,Undisclosed,21
+198,Other,Female,61
+199,Platform A,Male,52
+200,Platform B,Male,42
+201,Platform B,Male,51
+202,Platform C,Undisclosed,64
+203,Platform B,Male,21
+204,Platform C,Female,73
+205,Platform C,Male,45
+206,Platform A,Male,74
+207,Platform B,Male,37
+208,Other,Male,78
+209,Platform A,Male,42
+210,Platform B,Male,22
+211,Other,Male,61
+212,Platform C,Male,67
+213,Platform A,Female,48
+214,Platform B,Female,33
+215,Platform B,Undisclosed,64
+216,Platform B,Male,54
+217,Platform C,Male,74
+218,Platform B,Female,33
+219,Platform B,Female,34
+220,Platform B,Male,67
+221,Platform A,Female,51
+222,Platform B,Male,26
+223,Platform A,Female,65
+224,Platform C,Female,55
+225,Platform C,Male,29
+226,Other,Female,44
+227,Platform C,Undisclosed,61
+228,Platform B,Male,36
+229,Platform B,Male,26
+230,Other,Female,70
+231,Platform A,Male,71
+232,Platform B,Female,64
+233,Other,Undisclosed,37
+234,Platform A,Male,28
+235,Platform C,Male,24
+236,Platform A,Male,78
+237,Platform B,Female,18
+238,Platform A,Female,19
+239,Platform A,Undisclosed,39
+240,Platform A,Male,64
+241,Platform A,Undisclosed,77
+242,Platform C,Male,19
+243,Platform B,Female,51
+244,Platform C,Male,43
+245,Platform A,Female,34
+246,Platform A,Male,72
+247,Platform C,Male,22
+248,Platform C,Male,49
+249,Platform B,Male,56
+250,Platform C,Male,79
+251,Platform C,Male,33
+252,Platform B,Male,67
+253,Platform C,Male,32
+254,Other,Female,55
+255,Platform C,Male,60
+256,Platform A,Undisclosed,76
+257,Platform C,Female,39
+258,Platform B,Female,58
+259,Platform C,Undisclosed,67
+260,Platform B,Male,44
+261,Platform A,Female,48
+262,Platform C,Female,58
+263,Platform A,Female,34
+264,Platform C,Female,57
+265,Platform C,Male,37
+266,Platform B,Female,47
+267,Platform B,Male,29
+268,Platform B,Female,32
+269,Platform A,Female,46
+270,Platform C,Male,26
+271,Other,Male,24
+272,Platform C,Male,41
+273,Platform A,Female,24
+274,Platform C,Female,35
+275,Platform C,Male,50
+276,Platform A,Male,71
+277,Platform A,Female,69
+278,Platform B,Male,61
+279,Platform A,Male,23
+280,Platform C,Male,60
+281,Other,Female,55
+282,Platform A,Male,77
+283,Platform C,Female,20
+284,Platform A,Female,36
+285,Platform B,Female,42
+286,Other,Male,59
+287,Platform C,Male,31
+288,Platform C,Female,20
+289,Other,Male,60
+290,Platform A,Female,34
+291,Platform A,Female,25
+292,Platform A,Female,76
+293,Platform B,Female,56
+294,Platform B,Female,40
+295,Platform C,Male,66
+296,Platform C,Male,56
+297,Platform A,Male,37
+298,Platform B,Male,75
+299,Platform B,Male,34
+300,Platform A,Undisclosed,53
+301,Platform A,Male,35
+302,Platform C,Female,18
+303,Platform A,Male,48
+304,Platform C,Female,48
+305,Platform B,Undisclosed,77
+306,Platform A,Female,74
+307,Platform A,Male,43
+308,Platform B,Female,41
+309,Platform C,Female,25
+310,Platform A,Female,69
+311,Platform A,Male,22
+312,Platform B,Female,73
+313,Platform C,Male,56
+314,Platform C,Undisclosed,36
+315,Platform B,Male,42
+316,Platform B,Female,32
+317,Platform C,Female,76
+318,Platform B,Female,55
+319,Platform B,Female,36
+320,Platform A,Male,19
+321,Platform A,Male,62
+322,Platform A,Male,23
+323,Platform C,Male,44
+324,Platform C,Female,79
+325,Platform A,Female,77
+326,Platform C,Undisclosed,47
+327,Platform A,Female,18
+328,Platform C,Undisclosed,23
+329,Platform A,Male,66
+330,Platform A,Female,78
+331,Platform B,Male,35
+332,Platform C,Female,51
+333,Platform C,Female,48
+334,Platform A,Female,26
+335,Platform A,Male,41
+336,Platform C,Male,33
+337,Platform B,Male,29
+338,Platform C,Female,55
+339,Other,Male,37
+340,Platform B,Male,44
+341,Platform B,Female,18
+342,Platform B,Male,45
+343,Platform B,Male,79
+344,Platform B,Female,56
+345,Platform B,Male,54
+346,Platform B,Female,53
+347,Other,Female,27
+348,Other,Male,65
+349,Platform B,Undisclosed,71
+350,Platform C,Male,58
+351,Platform C,Female,54
+352,Platform A,Male,54
+353,Platform A,Male,78
+354,Platform A,Male,30
+355,Platform A,Male,48
+356,Platform A,Female,58
+357,Platform C,Female,20
+358,Platform A,Male,58
+359,Platform C,Male,42
+360,Platform B,Undisclosed,76
+361,Platform A,Female,35
+362,Platform C,Female,36
+363,Other,Female,68
+364,Other,Female,69
+365,Platform C,Male,30
+366,Platform C,Male,58
+367,Platform B,Female,34
+368,Platform B,Male,77
+369,Other,Female,45
+370,Platform A,Male,57
+371,Platform C,Male,43
+372,Platform A,Male,20
+373,Platform B,Female,34
+374,Platform B,Male,54
+375,Platform B,Male,68
+376,Platform C,Male,60
+377,Platform A,Male,69
+378,Platform A,Male,63
+379,Platform A,Male,31
+380,Platform A,Female,39
+381,Other,Male,50
+382,Platform B,Female,39
+383,Platform A,Female,45
+384,Platform B,Female,59
+385,Platform B,Male,51
+386,Platform C,Male,72
+387,Platform A,Male,55
+388,Platform C,Male,53
+389,Platform A,Female,23
+390,Platform B,Male,18
+391,Platform A,Male,29
+392,Platform B,Undisclosed,24
+393,Platform B,Female,76
+394,Platform A,Female,28
+395,Platform B,Male,22
+396,Platform A,Female,59
+397,Platform B,Male,36
+398,Platform A,Male,24
+399,Platform B,Undisclosed,57
+400,Platform B,Female,41
+401,Platform A,Female,29
+402,Other,Male,78
+403,Platform C,Male,74
+404,Platform C,Undisclosed,29
+405,Platform B,Male,51
+406,Platform C,Male,20
+407,Platform A,Male,60
+408,Platform C,Female,22
+409,Platform B,Male,20
+410,Other,Female,19
+411,Platform C,Female,50
+412,Platform B,Female,26
+413,Platform B,Female,20
+414,Platform C,Male,59
+415,Platform C,Male,79
+416,Other,Male,26
+417,Platform C,Female,55
+418,Platform A,Female,72
+419,Platform C,Female,32
+420,Platform B,Male,43
+421,Platform C,Male,23
+422,Platform B,Male,18
+423,Platform B,Female,65
+424,Other,Male,43
+425,Platform B,Undisclosed,73
+426,Platform A,Male,23
+427,Platform C,Male,74
+428,Platform A,Male,26
+429,Platform B,Female,21
+430,Platform C,Female,68
+431,Platform B,Female,72
+432,Platform A,Male,74
+433,Platform B,Female,50
+434,Other,Male,36
+435,Platform A,Male,75
+436,Platform C,Female,28
+437,Platform A,Female,28
+438,Platform A,Male,28
+439,Platform C,Male,29
+440,Platform A,Female,30
+441,Platform B,Female,49
+442,Platform B,Undisclosed,52
+443,Platform C,Female,27
+444,Platform B,Male,58
+445,Platform B,Male,33
+446,Platform B,Female,22
+447,Platform C,Female,76
+448,Platform C,Female,58
+449,Platform A,Male,40
+450,Other,Female,26
+451,Platform A,Male,48
+452,Other,Male,48
+453,Platform A,Female,44
+454,Platform A,Female,65
+455,Platform C,Male,20
+456,Other,Female,45
+457,Platform C,Male,45
+458,Platform C,Undisclosed,73
+459,Platform A,Male,72
+460,Platform A,Male,44
+461,Platform A,Female,64
+462,Platform A,Male,46
+463,Other,Female,61
+464,Platform B,Female,75
+465,Platform B,Female,62
+466,Platform B,Female,66
+467,Platform B,Female,63
+468,Platform A,Female,54
+469,Platform A,Male,45
+470,Platform C,Undisclosed,37
+471,Platform A,Male,30
+472,Platform A,Male,69
+473,Platform B,Female,75
+474,Platform C,Male,70
+475,Platform B,Male,23
+476,Platform C,Male,51
+477,Other,Male,43
+478,Platform A,Undisclosed,68
+479,Platform A,Female,57
+480,Platform C,Female,39
+481,Platform C,Female,55
+482,Platform B,Female,51
+483,Platform A,Female,27
+484,Platform A,Female,35
+485,Platform A,Male,19
+486,Platform A,Female,27
+487,Platform C,Female,68
+488,Other,Female,27
+489,Platform A,Male,49
+490,Platform C,Male,51
+491,Platform C,Male,62
+492,Platform C,Female,78
+493,Platform C,Male,61
+494,Platform A,Female,75
+495,Platform B,Male,25
+496,Platform B,Female,79
+497,Platform C,Male,25
+498,Platform A,Female,43
+499,Platform B,Female,76
+500,Platform B,Female,41
+501,Platform B,Male,78
+502,Platform A,Male,63
+503,Platform B,Male,63
+504,Platform B,Male,57
+505,Platform A,Undisclosed,50
+506,Platform B,Female,77
+507,Platform A,Female,57
+508,Platform C,Undisclosed,72
+509,Platform B,Female,78
+510,Platform A,Female,36
+511,Platform B,Male,64
+512,Platform B,Male,55
+513,Platform C,Male,27
+514,Platform B,Male,68
+515,Platform A,Female,50
+516,Other,Female,18
+517,Platform C,Male,44
+518,Platform A,Male,75
+519,Platform A,Male,44
+520,Platform A,Male,53
+521,Platform B,Female,59
+522,Platform A,Female,33
+523,Other,Female,20
+524,Platform C,Male,19
+525,Platform B,Male,63
+526,Platform B,Female,76
+527,Platform A,Female,42
+528,Platform B,Male,52
+529,Platform A,Male,56
+530,Other,Male,25
+531,Platform A,Male,52
+532,Platform B,Male,40
+533,Platform A,Male,75
+534,Platform B,Male,67
+535,Platform B,Female,63
+536,Platform A,Male,66
+537,Platform C,Female,19
+538,Platform A,Female,41
+539,Platform B,Male,30
+540,Platform B,Male,77
+541,Platform A,Male,72
+542,Platform A,Male,33
+543,Platform A,Undisclosed,23
+544,Platform A,Male,36
+545,Platform B,Female,27
+546,Platform C,Female,53
+547,Platform C,Female,36
+548,Platform C,Female,68
+549,Platform B,Female,67
+550,Platform C,Male,52
+551,Platform B,Male,30
+552,Platform C,Male,19
+553,Other,Male,71
+554,Platform A,Undisclosed,42
+555,Platform C,Female,51
+556,Platform B,Male,41
+557,Platform C,Female,66
+558,Other,Male,63
+559,Platform A,Female,58
+560,Platform A,Male,75
+561,Platform C,Male,77
+562,Platform A,Male,48
+563,Platform C,Female,30
+564,Platform C,Female,32
+565,Platform A,Male,25
+566,Platform B,Female,39
+567,Platform B,Undisclosed,62
+568,Platform A,Female,23
+569,Platform B,Female,45
+570,Platform B,Female,56
+571,Platform A,Female,42
+572,Platform A,Male,30
+573,Platform C,Male,32
+574,Platform B,Female,48
+575,Platform B,Female,60
+576,Platform B,Female,72
+577,Platform B,Male,57
+578,Platform C,Undisclosed,67
+579,Platform A,Female,34
+580,Platform A,Female,68
+581,Platform B,Female,20
+582,Platform A,Female,41
+583,Platform A,Undisclosed,36
+584,Platform C,Male,40
+585,Platform B,Male,41
+586,Platform A,Female,45
+587,Other,Female,75
+588,Other,Female,55
+589,Platform B,Female,20
+590,Platform B,Female,75
+591,Platform C,Male,52
+592,Platform A,Undisclosed,60
+593,Platform B,Male,78
+594,Platform C,Undisclosed,49
+595,Platform C,Female,68
+596,Platform C,Male,19
+597,Platform A,Female,31
+598,Platform C,Male,57
+599,Other,Female,73
+600,Platform C,Male,77
+601,Platform B,Female,56
+602,Platform A,Male,18
+603,Other,Male,58
+604,Platform B,Female,69
+605,Platform C,Female,30
+606,Platform C,Male,25
+607,Platform C,Male,22
+608,Other,Female,71
+609,Platform B,Female,43
+610,Platform A,Female,18
+611,Platform B,Male,42
+612,Other,Female,23
+613,Platform B,Male,63
+614,Platform C,Female,53
+615,Platform B,Male,74
+616,Platform C,Female,48
+617,Platform A,Female,67
+618,Platform B,Male,33
+619,Platform C,Male,51
+620,Platform C,Male,28
+621,Platform C,Male,77
+622,Other,Female,74
+623,Platform B,Male,79
+624,Platform C,Male,42
+625,Platform A,Male,37
+626,Platform A,Female,45
+627,Platform A,Male,46
+628,Platform C,Male,22
+629,Platform B,Male,72
+630,Platform B,Female,74
+631,Platform A,Male,71
+632,Platform B,Female,37
+633,Platform A,Female,77
+634,Platform B,Female,40
+635,Platform C,Male,30
+636,Platform C,Female,18
+637,Other,Male,44
+638,Platform B,Male,36
+639,Other,Female,71
+640,Platform B,Male,21
+641,Platform C,Male,26
+642,Platform B,Male,23
+643,Platform B,Female,39
+644,Platform C,Male,53
+645,Platform C,Female,60
+646,Platform C,Female,50
+647,Platform C,Male,26
+648,Platform C,Male,31
+649,Platform C,Female,19
+650,Platform A,Female,40
+651,Platform C,Female,30
+652,Platform A,Male,48
+653,Platform B,Female,74
+654,Platform B,Undisclosed,44
+655,Platform C,Male,69
+656,Platform B,Female,62
+657,Platform B,Female,29
+658,Platform C,Female,27
+659,Platform B,Female,46
+660,Platform C,Male,67
+661,Platform B,Male,30
+662,Platform B,Female,55
+663,Platform C,Male,46
+664,Other,Female,49
+665,Platform A,Male,75
+666,Platform C,Female,18
+667,Other,Male,42
+668,Platform B,Male,55
+669,Platform C,Male,66
+670,Platform C,Female,69
+671,Platform B,Female,25
+672,Platform C,Undisclosed,71
+673,Platform A,Male,49
+674,Other,Female,44
+675,Other,Female,18
+676,Platform C,Female,29
+677,Platform B,Male,23
+678,Platform A,Male,46
+679,Platform B,Female,69
+680,Platform C,Female,77
+681,Platform A,Male,23
+682,Platform A,Female,29
+683,Platform B,Female,41
+684,Platform B,Male,57
+685,Platform B,Female,75
+686,Platform B,Female,69
+687,Platform B,Female,49
+688,Platform C,Male,19
+689,Platform B,Male,76
+690,Platform C,Female,34
+691,Platform C,Male,48
+692,Platform A,Female,72
+693,Platform C,Female,20
+694,Platform B,Female,78
+695,Other,Female,63
+696,Platform A,Undisclosed,46
+697,Platform C,Male,22
+698,Platform A,Female,64
+699,Other,Female,54
+700,Platform B,Male,75
+701,Platform A,Male,32
+702,Other,Undisclosed,19
+703,Platform B,Male,38
+704,Platform B,Female,71
+705,Platform B,Male,73
+706,Other,Male,59
+707,Platform B,Male,32
+708,Platform A,Male,29
+709,Other,Female,32
+710,Platform C,Female,67
+711,Platform C,Male,59
+712,Platform A,Undisclosed,32
+713,Platform C,Male,66
+714,Platform C,Female,51
+715,Other,Male,19
+716,Platform B,Male,78
+717,Platform C,Undisclosed,68
+718,Platform C,Male,48
+719,Platform B,Male,60
+720,Platform B,Female,72
+721,Platform A,Female,49
+722,Platform A,Male,31
+723,Platform B,Male,33
+724,Platform A,Male,29
+725,Platform A,Male,70
+726,Platform B,Male,31
+727,Other,Female,37
+728,Platform A,Female,71
+729,Platform C,Female,53
+730,Platform C,Male,25
+731,Platform C,Undisclosed,62
+732,Other,Male,45
+733,Platform B,Female,36
+734,Platform C,Female,59
+735,Platform A,Male,34
+736,Platform C,Male,79
+737,Platform B,Female,33
+738,Platform B,Female,41
+739,Platform C,Male,29
+740,Platform B,Undisclosed,27
+741,Platform C,Male,75
+742,Platform B,Male,57
+743,Platform C,Female,28
+744,Platform B,Female,35
+745,Platform C,Female,51
+746,Platform B,Male,64
+747,Platform C,Female,64
+748,Platform B,Female,32
+749,Platform A,Male,59
+750,Platform B,Undisclosed,54
+751,Platform C,Female,30
+752,Platform A,Male,61
+753,Platform C,Male,29
+754,Platform A,Male,48
+755,Platform C,Male,29
+756,Platform A,Female,58
+757,Platform A,Undisclosed,59
+758,Platform B,Male,28
+759,Platform A,Male,25
+760,Platform B,Female,64
+761,Platform C,Female,20
+762,Other,Male,33
+763,Platform B,Female,68
+764,Platform C,Male,47
+765,Platform B,Male,25
+766,Platform B,Male,73
+767,Platform C,Male,69
+768,Platform A,Female,43
+769,Platform C,Female,67
+770,Platform A,Male,54
+771,Platform A,Male,69
+772,Platform B,Male,51
+773,Platform A,Male,78
+774,Platform A,Female,38
+775,Platform C,Male,39
+776,Platform B,Male,72
+777,Other,Male,76
+778,Platform C,Female,18
+779,Platform B,Female,42
+780,Platform C,Female,43
+781,Platform A,Female,55
+782,Platform A,Male,39
+783,Platform C,Female,56
+784,Platform B,Male,24
+785,Platform A,Female,35
+786,Platform B,Female,38
+787,Platform A,Female,39
+788,Platform B,Male,76
+789,Platform C,Male,47
+790,Other,Female,34
+791,Platform C,Female,20
+792,Platform A,Male,68
+793,Platform B,Female,66
+794,Platform B,Female,24
+795,Platform B,Male,38
+796,Platform B,Female,52
+797,Platform B,Undisclosed,20
+798,Platform C,Male,73
+799,Platform C,Male,43
+800,Platform C,Male,32
+801,Other,Male,40
+802,Other,Female,38
+803,Platform A,Female,76
+804,Platform A,Female,61
+805,Other,Undisclosed,26
+806,Platform A,Male,78
+807,Platform C,Female,22
+808,Platform B,Male,49
+809,Platform A,Female,64
+810,Platform C,Undisclosed,70
+811,Platform B,Undisclosed,73
+812,Platform B,Female,55
+813,Platform A,Female,49
+814,Platform C,Female,79
+815,Platform B,Male,64
+816,Platform C,Undisclosed,30
+817,Platform B,Male,75
+818,Platform A,Male,56
+819,Platform C,Male,27
+820,Platform C,Female,18
+821,Platform C,Female,50
+822,Platform A,Male,59
+823,Platform B,Undisclosed,69
+824,Platform A,Male,45
+825,Other,Undisclosed,76
+826,Platform A,Undisclosed,79
+827,Platform B,Female,42
+828,Platform B,Female,59
+829,Platform A,Male,41
+830,Platform A,Male,74
+831,Platform C,Male,29
+832,Other,Female,49
+833,Platform C,Female,24
+834,Platform A,Female,37
+835,Platform C,Male,22
+836,Platform C,Male,45
+837,Platform A,Female,61
+838,Platform B,Male,57
+839,Platform B,Male,48
+840,Platform B,Female,73
+841,Platform A,Male,63
+842,Platform B,Male,78
+843,Platform C,Female,31
+844,Platform C,Male,33
+845,Platform C,Undisclosed,71
+846,Platform A,Male,76
+847,Platform C,Female,32
+848,Platform C,Male,26
+849,Platform C,Male,72
+850,Platform A,Female,28
+851,Platform A,Male,47
+852,Platform A,Female,23
+853,Platform A,Female,78
+854,Platform A,Male,51
+855,Platform A,Female,34
+856,Platform A,Male,50
+857,Platform C,Male,23
+858,Platform A,Female,69
+859,Platform C,Female,79
+860,Platform A,Male,77
+861,Platform A,Female,24
+862,Platform C,Male,71
+863,Platform B,Female,45
+864,Platform B,Female,47
+865,Platform B,Male,75
+866,Platform B,Female,65
+867,Platform C,Undisclosed,28
+868,Platform A,Male,65
+869,Platform A,Male,25
+870,Platform C,Male,48
+871,Platform A,Female,37
+872,Platform B,Male,18
+873,Platform B,Male,45
+874,Platform A,Female,61
+875,Platform B,Male,68
+876,Platform C,Male,24
+877,Other,Male,77
+878,Platform B,Male,21
+879,Platform B,Female,43
+880,Platform B,Female,65
+881,Platform B,Female,62
+882,Platform A,Female,45
+883,Platform C,Female,63
+884,Platform A,Male,53
+885,Platform C,Male,53
+886,Platform A,Female,61
+887,Platform B,Male,76
+888,Platform A,Male,78
+889,Platform B,Female,33
+890,Platform C,Male,27
+891,Platform B,Male,57
+892,Other,Male,64
+893,Platform C,Male,37
+894,Platform B,Male,62
+895,Platform B,Undisclosed,23
+896,Other,Undisclosed,47
+897,Platform A,Female,23
+898,Platform B,Female,28
+899,Platform C,Male,26
+900,Platform C,Female,36
+901,Platform C,Female,40
+902,Platform B,Undisclosed,41
+903,Platform A,Female,43
+904,Platform C,Male,64
+905,Platform A,Female,55
+906,Platform C,Female,24
+907,Platform A,Male,65
+908,Platform A,Male,60
+909,Platform A,Undisclosed,47
+910,Platform B,Female,60
+911,Platform A,Male,62
+912,Platform B,Male,54
+913,Platform B,Undisclosed,42
+914,Platform B,Female,58
+915,Platform B,Male,53
+916,Platform A,Male,18
+917,Platform A,Female,41
+918,Platform C,Undisclosed,29
+919,Platform A,Female,18
+920,Other,Male,53
+921,Platform B,Male,61
+922,Platform B,Female,54
+923,Platform A,Male,49
+924,Platform C,Female,73
+925,Platform A,Female,77
+926,Platform A,Male,71
+927,Platform C,Male,72
+928,Platform B,Female,74
+929,Platform B,Male,68
+930,Platform B,Male,74
+931,Platform A,Female,20
+932,Platform C,Female,32
+933,Platform A,Male,68
+934,Other,Male,76
+935,Other,Male,75
+936,Platform C,Male,79
+937,Platform C,Male,31
+938,Platform A,Male,53
+939,Platform B,Male,74
+940,Platform C,Male,32
+941,Platform A,Male,30
+942,Platform B,Female,18
+943,Other,Male,51
+944,Platform A,Female,46
+945,Platform B,Female,62
+946,Platform A,Female,21
+947,Platform A,Male,30
+948,Platform C,Female,59
+949,Platform A,Female,30
+950,Platform B,Male,60
+951,Other,Female,45
+952,Platform B,Female,45
+953,Platform C,Female,79
+954,Platform C,Female,66
+955,Other,Female,20
+956,Platform A,Male,62
+957,Platform A,Male,73
+958,Platform A,Male,28
+959,Platform C,Undisclosed,63
+960,Platform C,Female,76
+961,Other,Male,49
+962,Platform C,Female,70
+963,Platform A,Male,50
+964,Other,Female,59
+965,Platform A,Male,21
+966,Platform B,Female,78
+967,Platform C,Female,22
+968,Platform C,Female,42
+969,Platform B,Male,57
+970,Platform C,Male,30
+971,Platform A,Female,59
+972,Platform C,Female,53
+973,Platform A,Female,31
+974,Platform B,Male,38
+975,Other,Male,59
+976,Platform A,Male,23
+977,Platform A,Female,32
+978,Platform B,Female,47
+979,Platform A,Female,66
+980,Other,Undisclosed,46
+981,Platform C,Female,53
+982,Platform B,Female,34
+983,Platform C,Male,67
+984,Platform C,Female,43
+985,Platform C,Male,32
+986,Platform B,Female,36
+987,Platform A,Female,53
+988,Platform A,Undisclosed,41
+989,Platform A,Female,55
+990,Platform A,Female,59
+991,Platform C,Female,49
+992,Other,Female,75
+993,Other,Male,18
+994,Other,Male,33
+995,Platform B,Female,74
+996,Platform C,Female,72
+997,Platform A,Male,70
+998,Platform A,Undisclosed,29
+999,Platform A,Male,42
+1000,Platform B,Female,22
