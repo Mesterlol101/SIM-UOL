@@ -1,0 +1,83 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f0f0;
+  overflow-x: hidden;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #e8e8e8;
+  border-color: #999;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+input[type="range"] {
+  cursor: pointer;
+  accent-color: #4a90d9;
+}
+
+select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+}
+
+h4 {
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  color: #333;
+}
+
+span {
+  font-size: 11px;
+  color: #555;
+}
+
+/* Custom checkbox styling */
+input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+canvas {
+  display: block;
+}
