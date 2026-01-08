@@ -1,0 +1,42 @@
+TASK 1.2 REPORT: SOUND LIBRARY APPLICATION WITH REAL-TIME AUDIO EFFECTS
+
+APPLICATION OVERVIEW
+This interactive sound library manager built using p5.js enables users to load, record, manipulate, and analyze audio with real-time digital signal processing effects. The interface features six sound slots, playback controls, dual spectrum analyzers, and a comprehensive effects panel.
+
+IMPLEMENTED EFFECTS
+
+1. Low-Pass Filter
+The p5.LowPass() filter attenuates frequencies above a cutoff point. The "Cutoff" toggle reduces frequency to 1000 Hz, creating a muffled sound, while "Resonance" adds emphasis at the cutoff frequency. Spectrum analysis shows reduced high-frequency amplitude with energy concentrated in lower frequencies. Implementation uses lowPassFilter.freq() and lowPassFilter.res() with lowPassFilter.process().
+
+2. Reverb
+The p5.Reverb() effect simulates acoustic space through reflections and decay. "Duration" extends reverb time to 5 seconds, while "Reverse" creates backwards reverb. Spectrally, reverb adds sustained energy across all frequencies, creating a denser spectral footprint. Implementation uses reverb.set() with duration, decay, and reverse parameters.
+
+3. Dynamic Compressor
+Implemented with p5.Compressor(), this reduces dynamic range by controlling loud signals. "Attack" sets 0.1-second response time, while "Knee" uses 30dB for smooth compression onset. Spectrally, compression creates consistent amplitude, reducing peaks. Parameters include attack, knee, ratio, threshold, and release via compressor.set().
+
+4. Waveshaper Distortion
+The p5.Distortion() applies non-linear distortion, adding harmonic overtones. "Distortion" toggle sets amount to 0.8, while "Oversample" enables 4x oversampling to reduce aliasing. The spectrum displays additional harmonic frequencies as multiples of fundamentals. Implementation uses waveshaper.set().
+
+All effects include Dry/Wet (DW) sliders controlling processed/original signal balance and Output Level (OL) sliders for volume control via drywet() and amp() methods.
+
+ADDITIONAL FILTER EFFECTS
+
+1. Delay/Echo Effect
+Using p5.Delay(), this creates echo patterns through signal repetition at specified intervals. Adjustable parameters include delay time (0.1-2 seconds), feedback amount, and filter frequency. The spectrum shows periodic energy bursts corresponding to echoes.
+
+2. Panning/Stereo Width
+The p5.Panner() spatially positions sounds in the stereo field with auto-pan (LFO-controlled), stereo width adjustment, and manual positioning. Implementation uses panner.pan() with values from -1 (left) to 1 (right), modulated by an oscillator for automatic movement.
+
+SOUND LIBRARY FEATURES
+
+Recording: "Record New" activates the microphone via p5.AudioIn(), capturing audio through p5.SoundRecorder() and storing it in the selected slot with timestamp labels.
+
+Loading: The "..." button triggers createFileInput() for loading external audio files (MP3, WAV, OGG), displaying filenames on sound buttons.
+
+Saving Filters: Users select slots, enable effects via toggles, adjust DW/OL sliders, and click "Save" to store settings in savedEffects objects. Each sound maintains unique effect configurations.
+
+Reloading: Selecting a sound slot automatically restores previously saved effect settings, including all toggle states and slider positions.
+
+Deleting: The "Delete" button removes sounds, stops playback, clears filenames, and resets labels to default "Sound X."
+
+The application features dual real-time spectrum analyzers using p5.FFT() to visualize frequency content before and after effects processing, providing immediate visual feedback on audio signal transformation.

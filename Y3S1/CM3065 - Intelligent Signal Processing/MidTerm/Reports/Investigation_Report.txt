@@ -1,0 +1,143 @@
+================================================================================
+INVESTIGATION REPORT: STATE-OF-THE-ART AUDIO STEGANOGRAPHY
+================================================================================
+Course: CM3065 - Intelligent Signal Processing
+Task: 3.3 - Investigation of Advanced Audio Steganographic Approaches
+Date: January 7, 2026
+Word Count: ~700 words
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+This report investigates Phase Coding steganography, a state-of-the-art 
+frequency-domain technique fundamentally different from LSB, offering superior 
+imperceptibility through psychoacoustic exploitation.
+
+================================================================================
+2. PHASE CODING TECHNIQUE
+================================================================================
+
+2.1 Operating Principles
+------------------------
+Phase Coding operates in the frequency domain, manipulating phase components 
+of an audio signal's FFT spectrum. It exploits the human auditory system's 
+phase-deafness to absolute phase while remaining sensitive to relative phase 
+changes between frequency components.
+
+The signal is segmented (typically 1024-2048 samples), with only the first 
+segment modified for embedding. Binary data maps to phase differences: 0→0°, 
+1→180°. The modified phase spectrum is inverse-transformed while preserving 
+magnitude, maintaining audio quality.
+
+2.2 Implementation Algorithm
+----------------------------
+**Embedding:**
+1. Apply FFT to first segment: X₀[k] = |X₀[k]|·e^(jφ₀[k])
+2. Modify phase based on binary data: φ'₀[k] = φ₀[k] + b·π
+3. Apply IFFT with original magnitude: x'₀[n] = IFFT{|X₀[k]|·e^(jφ'₀[k])}
+4. Adjust subsequent segments for phase continuity
+
+**Extraction:**
+1. Extract FFT phase from first segment
+2. Compare with original phase: Δφ ≈ π → bit=1, Δφ ≈ 0 → bit=0
+3. Reconstruct binary message
+
+================================================================================
+3. COMPARATIVE ANALYSIS: PHASE CODING VS LSB
+================================================================================
+
+3.1 Domain & Imperceptibility
+-----------------------------
+**LSB:** Time-domain manipulation, SNR 30-50 dB, audible at high rates
+**Phase Coding:** Frequency-domain, SNR 60+ dB, psychoacoustically optimized
+**Winner:** Phase Coding - exploits auditory masking for superior quality
+
+3.2 Embedding Capacity
+----------------------
+**LSB:** 1 bit/sample (44,100 bits/sec at 44.1kHz)
+**Phase Coding:** 50-100 bits/sec
+**Winner:** LSB - 400-900× higher capacity
+
+3.3 Robustness
+--------------
+**LSB:** Vulnerable to noise, compression, resampling, all signal processing
+**Phase Coding:** Resistant to amplitude scaling, moderate noise, D/A-A/D conversion, but sensitive to time-stretching and pitch-shifting
+**Winner:** Phase Coding - survives common processing operations
+
+3.4 Computational Complexity
+----------------------------
+**LSB:** O(n), simple bitwise operations, integer arithmetic
+**Phase Coding:** O(n log n) per segment, FFT/IFFT, floating-point, complex numbers
+**Winner:** LSB - 10-100× faster
+
+3.5 Security
+------------
+**LSB:** Detectable via chi-square, histogram, RS, sample pair analysis
+**Phase Coding:** Resistant to statistical attacks, phase analysis less intuitive
+**Winner:** Phase Coding - harder to detect
+
+3.6 Implementation
+------------------
+**LSB:** ~20-30 lines, no DSP knowledge required
+**Phase Coding:** ~200+ lines, requires FFT libraries, psychoacoustic understanding, phase continuity management
+**Winner:** LSB - significantly simpler
+
+================================================================================
+4. SUMMARY TABLE
+================================================================================
+
+Criterion            LSB              Phase Coding     Winner
+------------------------------------------------------------------------
+Imperceptibility     30-50 dB         60+ dB          Phase Coding
+Capacity             Very High        Moderate        LSB
+Robustness           Poor             Better          Phase Coding
+Speed                Very Fast        Slow            LSB
+Implementation       Easy             Complex         LSB
+Security             Poor             Better          Phase Coding
+Quality              Moderate         Excellent       Phase Coding
+
+================================================================================
+5. USE CASES & RECOMMENDATIONS
+================================================================================
+
+**Choose Phase Coding When:**
+- Audio quality paramount (professional music, broadcast)
+- Security against detection critical
+- Small payload (<100 bits/sec): copyright hashes, authentication keys
+- Robustness to signal processing required
+- Applications: Digital watermarking, broadcast monitoring, forensic marking
+
+**Choose LSB When:**
+- Large data volumes required
+- Speed critical
+- Simple implementation needed
+- Audio quality secondary
+- Applications: Covert communication, temporary hiding, metadata embedding
+
+**Hybrid Approach:**
+Modern systems combine both: Phase Coding for critical small payloads 
+(authentication), LSB for larger non-critical data (metadata). Example: 
+Phase Coding embeds 64-bit copyright hash; LSB embeds 1KB metadata.
+
+================================================================================
+6. CONCLUSION
+================================================================================
+
+Phase Coding prioritizes quality and security over capacity through 
+psychoacoustic frequency-domain manipulation, achieving 10-20 dB better SNR 
+than LSB but 400-900× lower capacity. LSB offers simplicity and speed with 
+10-100× faster computation. The choice depends on specific requirements: 
+Phase Coding for high-quality, secure, small-payload applications; LSB for 
+high-capacity, speed-critical scenarios. State-of-the-art systems often employ 
+adaptive hybrid approaches leveraging both techniques' strengths.
+
+================================================================================
+REFERENCES
+================================================================================
+1. Bender, W., et al. (1996). "Techniques for data hiding." IBM Systems 
+   Journal, 35(3.4), 313-336.
+2. Cox, I. J., et al. (2007). "Digital Watermarking and Steganography." 
+   Morgan Kaufmann.
+3. Petitcolas, F. A., et al. (1999). "Information hiding-a survey." IEEE.
+================================================================================
