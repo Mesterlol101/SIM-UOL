@@ -2,6 +2,11 @@
 *.vs
 *.tar
 *.zip
+*.mp3
+*.mp4
+*.wav
+*.avi
+*.mov
 **/vcpkg
 
 ## CM2005-OOP Ignores
@@ -11,3 +16,6 @@ merklerex_midterm
 Midterm-apr2024
 *.jucer
 **/CM2005-OOP/Topic10/OtoDecks_Final/Builds/
+
+## CM3065-ISP Ignores
+*.ex2
