@@ -1,0 +1,46 @@
+LOAD DATA INFILE "/home/coder/project/SF_film_locations.csv" 
+REPLACE 
+INTO TABLE Locations 
+FIELDS 
+	TERMINATED BY "," 
+	OPTIONALLY ENCLOSED BY '"' 
+	ESCAPED BY '"' 
+IGNORE 1 ROWS;
+SELECT
+c.Type, AVG(c.Age) as AVG_AGE
+FROM
+(
+	SELECT
+	DISTINCT a.Actor1 as ActorName,TIMESTAMPDIFF(YEAR,b.DOB,CURDATE()) as Age, 'Actor1' as Type
+	FROM
+	Locations a INNER JOIN Actors b on(a.Actor1 = b.Name)
+	WHERE
+	a.Actor1 <> '' AND
+	a.Actor1 IS NOT NULL AND 
+	b.Name <> '' AND
+	b.Name IS NOT NULL
+
+	UNION ALL
+
+	SELECT
+	DISTINCT a.Actor2 as ActorName,TIMESTAMPDIFF(YEAR,b.DOB,CURDATE()) as Age, 'Actor2' as Type
+	FROM
+	Locations a INNER JOIN Actors b on(a.Actor2 = b.Name)
+	WHERE
+	a.Actor2 <> '' AND
+	a.Actor2 IS NOT NULL AND 
+	b.Name <> '' AND
+	b.Name IS NOT NULL
+
+	UNION ALL
+
+	SELECT
+	DISTINCT a.Actor3 as ActorName,TIMESTAMPDIFF(YEAR,b.DOB,CURDATE()) as Age, 'Actor3' as Type
+	FROM
+	Locations a INNER JOIN Actors b on(a.Actor3 = b.Name)
+	WHERE
+	a.Actor3 <> '' AND
+	a.Actor3 IS NOT NULL AND 
+	b.Name <> '' AND
+	b.Name IS NOT NULL
+);
