@@ -1,0 +1,116 @@
+Exercise 4 Report
+Emerging Computer Vision and Audio Processing for Retail / E-Commerce
+
+Introduction
+Retail and e-commerce are moving from simple automation to intelligent, multimodal systems. In practice, this means using computer vision and audio together to understand customer behavior, monitor stock, improve search, and reduce losses. In this report, I critically discuss three emerging applications, then explain two key technical methods in more depth, and finally propose two creative real-world uses that could solve practical problems.
+
+1) Critical discussion of three emerging applications
+
+Application 1: Frictionless checkout
+What is it?
+Frictionless checkout is a system where customers pick items and leave, while cameras/sensors identify products and automatically generate payment.
+
+What technique does it use?
+It usually combines object detection, multi-object tracking, person re-identification, and event recognition (for example detecting “pick-up” and “put-back” actions). Audio can support edge cases, such as detecting scan sounds or dispute interactions.
+
+Why is it effective?
+It removes queues, reduces abandoned purchases caused by waiting, and improves store throughput. It also gives useful operational data (peak times, congestion zones, and product interaction patterns).
+
+What are limitations?
+Accuracy drops in crowded scenes with occlusion. Similar-looking products can confuse vision models. There are also privacy and fairness concerns if systems are not audited properly. Finally, deployment cost is high because stores need camera infrastructure, calibration, and maintenance.
+
+How can it be improved?
+A practical improvement is multimodal fusion: combine camera data with shelf-weight sensors and audio events to reduce ambiguity. Another is uncertainty-aware decision logic that sends low-confidence cases to a human reviewer instead of forcing automatic decisions.
+
+Application 2: Intelligent shelf monitoring
+What is it?
+This system checks shelves continuously to detect out-of-stock products, wrong product placement, and planogram violations.
+
+What technique does it use?
+It relies on object detection/segmentation and OCR for labels/price tags, plus temporal smoothing to avoid false alarms from brief occlusions.
+
+Why is it effective?
+It reduces missed sales caused by stock-outs and improves merchandising consistency. It can also help warehouse picking quality by visually verifying bins/shelves.
+
+What are limitations?
+It is sensitive to domain shift: lighting changes, camera angle changes, reflective packaging, and seasonal redesigns can all reduce model performance. Small items and partial visibility remain difficult.
+
+How can it be improved?
+Use continual learning with drift detection, and active learning to label only the hardest cases. Also, cross-check vision alerts with other signals (RFID, inventory logs, or shelf sensors) before triggering replenishment.
+
+Application 3: Multimodal product search and assistance
+What is it?
+Users search with mixed inputs such as image + text + voice (e.g., “find this bag in black below £60”).
+
+What technique does it use?
+Vision-language (and optionally audio) embeddings map different modalities into one shared feature space, then retrieval/reranking selects candidate products.
+
+Why is it effective?
+It helps users who cannot describe a product well in text and improves discovery in mobile shopping contexts. This can increase conversion and customer satisfaction.
+
+What are limitations?
+Speech ambiguity, accents, background noise, and dataset bias can hurt results. Retrieval may over-focus on visual similarity and ignore stock/policy constraints.
+
+How can it be improved?
+Add constrained reranking using inventory, size, policy, and price filters. Also provide explainable reasons for matches (“matched by shape, texture, and color”).
+
+2) Technical discussion of two key techniques
+
+Technique A: Transformer-based detection and tracking for retail video
+Pipeline (simplified):
+Camera frames -> CNN/ViT backbone -> transformer encoder/decoder -> object boxes/classes -> tracker -> business events.
+
+Key equation (self-attention):
+Attention(Q,K,V) = softmax((QK^T)/sqrt(d_k))V
+
+Why it matters:
+Compared with older local detectors, transformer-based approaches model wider context, which is useful in cluttered aisles and busy checkout scenes. With tracking-by-detection, the system can convert frame-level detections into event-level outputs (pick/return/counting/queue analytics).
+
+Main strengths:
+- strong contextual reasoning
+- scalable architecture for complex scenes
+- compatible with end-to-end learning
+
+Main weaknesses:
+- high compute and data requirements
+- identity switching can still happen with severe occlusion
+
+Technique B: Cross-modal contrastive embeddings (CLIP-style, plus audio branch)
+Pipeline (simplified):
+Image encoder + text encoder + audio encoder -> projection layers -> shared embedding space -> nearest-neighbor retrieval/reranking.
+
+Core objective (InfoNCE style):
+L = -log( exp(sim(z_i,z_t)/tau) / sum_j exp(sim(z_i,z_tj)/tau) )
+
+Why it matters:
+This method enables practical multimodal search in e-commerce catalogs. If metadata is poor, learned embeddings still capture visual and semantic similarity. Audio can add user intent from spoken queries.
+
+Main strengths:
+- flexible interaction (voice/text/image)
+- good scalability for large catalogs
+
+Main weaknesses:
+- sensitive to biased or noisy training data
+- requires policy-aware reranking after retrieval
+
+3) Two creative / novel uses
+
+Novel use 1: Return-fraud triage using video + acoustic cues
+In returns processing, combine visual inspection (item condition/identity) with acoustic signatures (package opening, object impact, shake patterns). A multimodal anomaly detector can flag suspicious returns for manual verification. This could reduce both fraudulent refunds and false accusations against honest customers.
+
+Novel use 2: Accessibility-first in-store assistant
+A mobile/wearable assistant can detect products on shelves and provide short adaptive audio prompts (price, allergens, offers, alternatives). It can also listen for user intent and environmental warnings (crowding, announcements). This directly supports inclusive retail for visually impaired and neurodivergent shoppers.
+
+Conclusion
+The most important lesson is that high-performing retail intelligence is rarely single-modality. Vision gives spatial understanding, while audio adds context that cameras often miss. However, technical performance alone is not enough: reliability under shift, fairness, privacy, and explainability are essential for real deployment. The two techniques discussed (transformer-based scene understanding and contrastive multimodal embeddings) are powerful, but they should be combined with uncertainty handling, human oversight, and policy constraints. With these safeguards, multimodal systems can solve real problems in retail/e-commerce while remaining practical and trustworthy.
+
+References (Harvard style)
+Carion, N., Massa, F., Synnaeve, G., Usunier, N., Kirillov, A. and Zagoruyko, S. (2020) ‘End-to-End Object Detection with Transformers’, in Vedaldi, A. et al. (eds.) European Conference on Computer Vision (ECCV). Cham: Springer, pp. 213-229. Available at: https://arxiv.org/abs/2005.12872 (Accessed: 24 February 2026).
+
+Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J. and Houlsby, N. (2021) ‘An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale’, in International Conference on Learning Representations (ICLR). Available at: https://arxiv.org/abs/2010.11929 (Accessed: 24 February 2026).
+
+FFmpeg (n.d.) FFmpeg Documentation. Available at: https://ffmpeg.org/documentation.html (Accessed: 25 February 2026).
+
+Radford, A., Kim, J.W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., Krueger, G. and Sutskever, I. (2021) ‘Learning Transferable Visual Models From Natural Language Supervision’, in International Conference on Machine Learning (ICML), Proceedings of Machine Learning Research, 139, pp. 8748-8763. Available at: https://arxiv.org/abs/2103.00020 (Accessed: 26 February 2026).
+
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, Ł. and Polosukhin, I. (2017) ‘Attention Is All You Need’, in Guyon, I. et al. (eds.) Advances in Neural Information Processing Systems 30 (NeurIPS 2017), pp. 5998-6008. Available at: https://arxiv.org/abs/1706.03762 (Accessed: 27 February 2026).

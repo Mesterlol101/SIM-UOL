@@ -1,0 +1,125 @@
+Evaluating Models & Making Decisions
+
+This section focuses on how to evaluate machine learning models properly and how to connect model performance to real-world business value.
+
+🔍 1. Why Accuracy Alone is Not Enough
+
+A key idea: accuracy can be misleading, especially when classes are imbalanced.
+
+Example:
+Fraud detection: 99% non-fraud, 1% fraud
+A model that predicts “no fraud” always = 99% accuracy
+But it's useless
+
+👉 Instead, we need more nuanced metrics.
+
+📈 2. Confusion Matrix (Core Concept)
+
+A confusion matrix breaks predictions into:
+
+	Predicted Positive	Predicted Negative
+Actual Positive	True Positive (TP)	False Negative (FN)
+Actual Negative	False Positive (FP)	True Negative (TN)
+
+This is the foundation for most evaluation metrics.
+
+📏 3. Key Evaluation Metrics
+✅ Precision
+“When the model predicts positive, how often is it correct?”
+Formula:
+Precision = TP / (TP + FP)
+🔍 Recall (Sensitivity)
+“How many actual positives did we catch?”
+Formula:
+Recall = TP / (TP + FN)
+⚖️ Tradeoff:
+Increasing precision ↓ recall
+Increasing recall ↓ precision
+
+👉 Depends on business context:
+
+Medical diagnosis → prioritize recall
+Spam filter → prioritize precision
+📊 4. ROC Curves & AUC
+ROC Curve:
+Plots:
+True Positive Rate (Recall)
+vs False Positive Rate
+AUC (Area Under Curve):
+Measures overall model quality
+Range:
+0.5 = random
+1.0 = perfect
+
+👉 Key idea:
+AUC evaluates ranking ability, not exact predictions
+
+🎯 5. Thresholds Matter
+
+Most models output probabilities (e.g., 0.7 chance of fraud).
+
+You must choose a threshold:
+
+Above threshold → predict positive
+Below → predict negative
+
+👉 Changing threshold:
+
+Higher threshold → fewer positives → higher precision
+Lower threshold → more positives → higher recall
+💰 6. Cost-Sensitive Evaluation (VERY IMPORTANT)
+
+This is the most “business-focused” part.
+
+Different errors have different costs:
+
+Error Type	Example	Cost
+False Positive	Flagging legit transaction as fraud	Annoying customer
+False Negative	Missing fraud	$$$ loss
+
+👉 The goal is NOT best accuracy
+👉 The goal is lowest total cost
+
+🧠 7. Expected Value Framework
+
+You can assign monetary values to outcomes:
+
+TP → gain
+FP → cost
+FN → cost
+TN → neutral or small gain
+
+Then compute:
+
+Expected Value = (benefits − costs)
+
+👉 Choose the model/threshold that maximizes value
+
+📉 8. Profit Curves / Cost Curves
+
+Instead of just accuracy:
+
+Plot profit vs threshold
+Or cost vs threshold
+
+👉 This helps pick the optimal operating point
+
+⚖️ 9. Comparing Models Properly
+
+Two models may:
+
+Have similar accuracy
+But very different business impact
+
+👉 Always compare using:
+
+ROC / AUC
+Cost / profit
+Context-specific metrics
+🧩 10. Key Takeaways
+Accuracy alone is often misleading
+Always use confusion matrix-based metrics
+Precision vs Recall tradeoff is context-dependent
+ROC/AUC evaluates ranking performance
+Threshold choice is critical
+Business value > statistical performance

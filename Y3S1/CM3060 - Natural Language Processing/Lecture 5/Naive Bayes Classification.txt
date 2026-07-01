@@ -1,0 +1,101 @@
+📘 What this section covers
+
+These pages sit at the start of the machine learning methods section, focusing on:
+
+Naive Bayes classification
+Transition into linear regression
+
+From the table of contents, this section includes:
+
+Naive Bayes (intro + types)
+When to use it
+Beginning of linear regression
+🧠 1. Naive Bayes – Core Idea
+
+Naive Bayes is a probabilistic classifier based on Bayes’ theorem.
+
+Key assumption:
+
+Features are independent given the class
+
+👉 This is the “naive” part — it’s usually false, but still works well.
+
+📊 2. Bayesian Classification Logic
+
+The model predicts the class with the highest probability:
+
+Compute probability of class given data
+Choose the class with the highest value
+
+Conceptually:
+
+Combine prior knowledge (class probability)
+With evidence from features
+
+👉 It’s simple but surprisingly powerful.
+
+⚙️ 3. Types of Naive Bayes
+🟢 Gaussian Naive Bayes
+Used when features are continuous
+Assumes data follows a normal (Gaussian) distribution
+
+👉 Example:
+
+Height, weight, exam scores
+🔵 Multinomial Naive Bayes
+Used for count-based data
+Common in text classification
+
+👉 Example:
+
+Word counts in emails (spam detection)
+🎯 4. When to Use Naive Bayes
+
+Naive Bayes works best when:
+
+Features are high-dimensional
+Independence assumption is “good enough”
+You need fast, simple models
+Common use cases:
+Spam detection
+Document classification
+Sentiment analysis
+
+👉 Key advantage:
+
+Very fast training and prediction
+Works well even with small datasets
+
+👉 Limitation:
+
+Assumption of independence can reduce accuracy
+📉 5. Transition to Linear Regression
+
+Around page ~390, the book shifts to:
+
+📈 Linear Regression (Start)
+Core idea:
+
+Model relationship between variables as a line
+
+Input → output via linear function
+Used for predicting continuous values
+Simple Linear Regression:
+One feature → one target
+Fits a straight line to data
+
+👉 This introduces:
+
+Model fitting
+Interpreting coefficients
+Predictive modeling basics
+🔑 Key Takeaways
+Naive Bayes:
+Probabilistic, simple, fast
+Works well for text & high-dimensional data
+Gaussian vs Multinomial:
+Continuous vs count data
+Independence assumption:
+Unrealistic, but often effective
+Transition into linear regression:
+Moves from classification → regression problems

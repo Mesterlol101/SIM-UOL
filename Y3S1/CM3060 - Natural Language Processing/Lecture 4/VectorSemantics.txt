@@ -1,0 +1,1 @@
+Check LexicalSemantics.pdf Sections 6.1-6.3

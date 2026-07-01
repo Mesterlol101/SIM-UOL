@@ -1,0 +1,31 @@
+def build_paired_dataframe(case_csv):
+    cases = pd.read_csv(case_csv).copy()
+    dicom_map = pd.read_csv(CSV_ROOT / 'dicom_info.csv')[['file_path', 'image_path']]
+    cases['image view'] = cases['image view'].astype(str).str.upper()
+    cases['label'] = cases['pathology'].astype(str).str.upper().eq('MALIGNANT').astype(int)
+    merged = cases.merge(dicom_map, left_on='image file path', right_on='file_path', how='left')
+    merged = merged.dropna(subset=['image_path'])
+    paired = (
+        merged.pivot_table(
+            index=['patient_id', 'left or right breast', 'abnormality id', 'label'],
+            columns='image view',
+            values='image_path',
+            aggfunc='first',
+        )
+        .reset_index()
+    )
+    paired = paired.rename(columns={'CC': 'cc_path', 'MLO': 'mlo_path'})
+    paired = paired.dropna(subset=['cc_path', 'mlo_path']).copy()
+    paired['cc_path'] = paired['cc_path'].apply(lambda p: str(DATA_ROOT / p))
+    paired['mlo_path'] = paired['mlo_path'].apply(lambda p: str(DATA_ROOT / p))
+    return paired[['cc_path', 'mlo_path', 'label']]
+
+train_pairs = pd.concat([
+    build_paired_dataframe(CSV_ROOT / 'calc_case_description_train_set.csv'),
+    build_paired_dataframe(CSV_ROOT / 'mass_case_description_train_set.csv'),
+], ignore_index=True)
+test_pairs = pd.concat([
+    build_paired_dataframe(CSV_ROOT / 'calc_case_description_test_set.csv'),
+    build_paired_dataframe(CSV_ROOT / 'mass_case_description_test_set.csv'),
+], ignore_index=True)
+print(f'Train pairs: {len(train_pairs)} | Test pairs: {len(test_pairs)}')

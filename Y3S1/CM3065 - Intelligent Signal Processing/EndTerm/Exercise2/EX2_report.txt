@@ -1,0 +1,35 @@
+Report (~500 words)
+
+Coursera notebook link : https://hub.labs.coursera.org:443/connect/sharedrnikcohk?forceRefresh=false&sessionMigrationMode=shadow
+
+Compression results (from this run)
+
+| File       | Original size (B) | Rice K=4 (B) | Rice K=2 (B) | % Compression K=4 | % Compression K=2 |
+|------------|-------------------|--------------|--------------|-------------------|-------------------|
+| Sound1.wav | 1,002,088         | 857,472      | 2,429,926    | 14.43%            | -142.49%          |
+| Sound2.wav | 1,008,044         | 56,793,309   | 226,196,628  | -5534.01%         | -22339.16%        |
+
+1) Brief explanation of the application
+The notebook implements a lossless .ex2 codec using Rice coding. Each WAV is read as PCM samples, converted to signed integers, and transformed into first-order residuals (r_t = s_t - s_(t-1), with r_0 = s_0). Residual coding is important because audio samples are often correlated; differences are usually smaller than raw amplitudes. Residuals are zigzag-mapped to non-negative integers and then Rice-coded using parameter K.
+
+For each mapped value u, Rice coding splits it into:
+- quotient: q = floor(u / 2^K)
+- remainder: r = u mod 2^K
+
+The quotient is unary coded (a run of 1s followed by 0), and the remainder is stored in exactly K bits. The decoder reverses all steps (Rice decode -> zigzag inverse -> cumulative sum) to reconstruct the exact original PCM signal.
+
+2) Correctness and lossless verification
+The implementation includes a small-integer sanity test to validate unary quotient coding, remainder packing, and signed-sample handling before running WAV files. After compression, each .ex2 is decoded into a WAV and checked using:
+
+np.array_equal(original, decoded)
+
+Additionally, decoded raw PCM bytes are compared with the original bytes. In this run, all checks passed for both files and both K values, so the codec is lossless.
+
+3) Why Sound1 and Sound2 differ so much in compression
+The difference is caused by source statistics. Rice coding is very effective when many values are near zero (small residual magnitudes), because unary quotients stay short. Sound1.wav appears to have smoother local sample changes, so K=4 gives a real size reduction (14.43%). In contrast, Sound2.wav likely contains more abrupt changes, richer transients, or wider dynamic spread, producing large residual magnitudes. Large values create long unary prefixes and dramatically increase coded size. This explains why Sound2.wav expands heavily rather than compressing.
+
+4) Effect of K on performance
+K controls the tradeoff between quotient length and fixed remainder bits. Lower K (e.g., 2) reduces remainder bits but increases quotient lengths, which can hurt performance when values are not very small. Higher K (e.g., 4) shortens quotients at the cost of more remainder bits. In this experiment, K=4 is consistently better than K=2 for both files, showing that the underlying value distribution favors a larger remainder budget.
+
+5) Improvements
+Compression can be improved using block-adaptive K selection, higher-order prediction, or channel-wise decorrelation for multi-channel content. These methods reduce residual entropy before Rice coding and usually improve robustness across diverse audio types while keeping lossless reconstruction.
