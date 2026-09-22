@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steam Research Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page-wrap">
+      <section class="hero">
+        <p class="eyebrow">CM3010 Stage 4</p>
+        <h1>Steam Games Database Research App</h1>
+        <p class="lead">
+          A lightweight Node.js + MySQL web app that executes research-focused SQL queries against the normalized Steam schema.
+        </p>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <h2>Total Games</h2>
+          <p><%= stats.totalGames %></p>
+        </article>
+        <article class="stat-card">
+          <h2>Total Tags</h2>
+          <p><%= stats.totalTags %></p>
+        </article>
+        <article class="stat-card">
+          <h2>Game-Tag Links</h2>
+          <p><%= stats.totalGameTags %></p>
+        </article>
+        <article class="stat-card">
+          <h2>Total Developers</h2>
+          <p><%= stats.totalDevelopers %></p>
+        </article>
+      </section>
+
+      <section class="query-list">
+        <h2>Research Questions</h2>
+        <% querySlugs.forEach((slug, i) => { %>
+          <article class="query-item">
+            <div>
+              <p class="q-index">Q<%= i + 1 %></p>
+              <h3><%= researchQueries[slug].title %></h3>
+              <p><%= researchQueries[slug].description %></p>
+            </div>
+            <a class="btn" href="/research/<%= slug %>">Run Query</a>
+          </article>
+        <% }) %>
+      </section>
+    </main>
+  </body>
+</html>

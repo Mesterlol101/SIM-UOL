@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page-wrap query-page">
+      <a class="back-link" href="/">Back to dashboard</a>
+
+      <section class="hero compact">
+        <p class="eyebrow">Research Query</p>
+        <h1><%= title %></h1>
+        <p class="lead"><%= description %></p>
+      </section>
+
+      <% if (extra && extra.length) { %>
+        <section class="extra-block">
+          <h2>Data Quality Snapshot</h2>
+          <pre><%= JSON.stringify(extra[0], null, 2) %></pre>
+        </section>
+      <% } %>
+
+      <section class="table-shell">
+        <p class="row-count">Returned rows: <strong><%= rows.length %></strong></p>
+
+        <% if (!rows.length) { %>
+          <p class="empty-state">No rows returned for current thresholds.</p>
+        <% } else { %>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <% columns.forEach((col) => { %>
+                    <th><%= col %></th>
+                  <% }) %>
+                </tr>
+              </thead>
+              <tbody>
+                <% rows.forEach((row) => { %>
+                  <tr>
+                    <% columns.forEach((col) => { %>
+                      <td><%= row[col] %></td>
+                    <% }) %>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+Stage 3. Create the database
+
+I implemented the database in MySQL using a normalized schema based on the Stage 2 E/R model. The core table is game (key: app_id), with lookup tables for developer, publisher, genre, category, tag, language, and audio_language. Many-to-many relationships were implemented using associative tables (game_developer, game_publisher, game_genre, game_category, game_tag, game_language, game_audio_language), each with a composite primary key and foreign keys back to the parent tables. All CREATE commands are provided in stage3/schema.sql.
+
+To add instance data, I first prepared a cleaned dataset (archive/games_clean_stage2.csv). I then used stage3/load_mysql.py to parse scalar fields into the game table and split multi-valued columns into normalized rows in the lookup and associative tables. I tested using a sample subset first and then used the same process for a larger load. Validation queries confirmed non-empty row counts in core and junction tables and successful joins between games and tags.
+
+Reflection: The design reflects the data well for analytical and web queries, especially because community tags, genres, categories, and language support are modeled as many-to-many relationships. This reduces redundancy and avoids update anomalies. The main challenge was source quality: some fields were sparse and one source column header appeared malformed, which required explicit preprocessing decisions before loading.
