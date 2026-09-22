@@ -10,9 +10,12 @@ import simulation
 import genome 
 import creature 
 import numpy as np
+import os
 
 class TestGA(unittest.TestCase):
     def testBasicGA(self):
+        csv_dir = "ga_results"
+        os.makedirs(csv_dir, exist_ok=True)
         pop = population.Population(pop_size=10, 
                                     gene_count=3)
         #sim = simulation.ThreadedSim(pool_size=1)
@@ -22,9 +25,7 @@ class TestGA(unittest.TestCase):
             # this is a non-threaded version 
             # where we just call run_creature instead
             # of eval_population
-            for cr in pop.creatures:
-                sim.run_creature(cr, 2400)            
-            #sim.eval_population(pop, 2400)
+            sim.eval_population(pop, 2400)
             fits = [cr.get_distance_travelled() 
                     for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) 
@@ -53,7 +54,7 @@ class TestGA(unittest.TestCase):
                     new_cr = creature.Creature(1)
                     new_cr.update_dna(cr.dna)
                     new_creatures[0] = new_cr
-                    filename = "elite_"+str(iteration)+".csv"
+                    filename = os.path.join(csv_dir, "elite_"+str(iteration)+".csv")
                     genome.Genome.to_csv(cr.dna, filename)
                     break
             

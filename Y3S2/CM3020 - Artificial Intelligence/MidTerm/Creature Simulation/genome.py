@@ -56,11 +56,15 @@ class Genome():
         return gdicts
 
     @staticmethod
-    def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links):
+    def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links, max_links=None):
+        if max_links is not None and len(exp_links) >= max_links:
+            return
         children = [l for l in flat_links if l.parent_name == parent_link.name]
         sibling_ind = 1
         for c in children:
             for r in range(int(c.recur)):
+                if max_links is not None and len(exp_links) >= max_links:
+                    return
                 sibling_ind  = sibling_ind +1
                 c_copy = copy.copy(c)
                 c_copy.parent_name = uniq_parent_name
@@ -70,7 +74,7 @@ class Genome():
                 c_copy.sibling_ind = sibling_ind
                 exp_links.append(c_copy)
                 assert c.parent_name != c.name, "Genome::expandLinks: link joined to itself: " + c.name + " joins " + c.parent_name 
-                Genome.expandLinks(c, uniq_name, flat_links, exp_links)
+                Genome.expandLinks(c, uniq_name, flat_links, exp_links, max_links=max_links)
 
     @staticmethod
     def genome_to_links(gdicts):

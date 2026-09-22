@@ -1,0 +1,16 @@
+{
+  "iterations": 100,
+  "pop_size": 20,
+  "gene_count": 10,
+  "seed_csv": null,
+  "seed_fraction": 0.4,
+  "seed_mutation_rate": 0.03,
+  "freeze_gene_count": 0,
+  "use_template_seed": true,
+  "max_links": 50,
+  "elite_count": 2,
+  "point_mutate_rate": 0.1,
+  "point_mutate_amount": 0.25,
+  "shrink_mutate_rate": 0.1,
+  "grow_mutate_rate": 0.1
+}

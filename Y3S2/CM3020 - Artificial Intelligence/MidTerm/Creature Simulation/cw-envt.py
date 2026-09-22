@@ -94,4 +94,4 @@ rob1 = p.loadURDF('test.urdf', (0, 0, 10))
 
 
 p.setRealTimeSimulation(1)
-
+input("Press Enter to exit...")

@@ -13,10 +13,21 @@ def main(csv_file):
 
     p.connect(p.DIRECT)
     p.setPhysicsEngineParameter(enableFileCaching=0)
-    p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
-    plane_shape = p.createCollisionShape(p.GEOM_PLANE)
-    floor = p.createMultiBody(plane_shape, plane_shape)
     p.setGravity(0, 0, -10)
+    # Arena
+    arena_size = 30
+    wall_height = 1
+    wall_thickness = 0.5
+    floor_shape = p.createCollisionShape(p.GEOM_BOX, halfExtents=[arena_size/2, arena_size/2, wall_thickness])
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=floor_shape, basePosition=[0, 0, -wall_thickness])
+    wall_ns = p.createCollisionShape(p.GEOM_BOX, halfExtents=[arena_size/2, wall_thickness/2, wall_height/2])
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ns, basePosition=[0,  arena_size/2, wall_height/2])
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ns, basePosition=[0, -arena_size/2, wall_height/2])
+    wall_ew = p.createCollisionShape(p.GEOM_BOX, halfExtents=[wall_thickness/2, arena_size/2, wall_height/2])
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ew, basePosition=[ arena_size/2, 0, wall_height/2])
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ew, basePosition=[-arena_size/2, 0, wall_height/2])
+    # Mountain
+    p.loadURDF("shapes/gaussian_pyramid.urdf", [0, 0, -1], p.getQuaternionFromEuler([0, 0, 0]), useFixedBase=1)
 #   p.setRealTimeSimulation(1)
 
 
@@ -30,7 +41,7 @@ def main(csv_file):
     # load it into the sim
     rob1 = p.loadURDF('test.urdf')
     # air drop it
-    p.resetBasePositionAndOrientation(rob1, [0, 0, 2.5], [0, 0, 0, 1])
+    p.resetBasePositionAndOrientation(rob1, [12, 0, 1], [0, 0, 0, 1])
 
     start_pos, orn = p.getBasePositionAndOrientation(rob1)
 

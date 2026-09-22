@@ -143,6 +143,7 @@ def generate_gaussian_pyramid(filename, size=10, resolution=0.5, sigma=3):
 import math
 
 def gaussian2(x, y, sigma, height):
+
     """Return the height of the shape at position (x, y) using a Gaussian function."""
     return height * math.exp(-((x**2 + y**2) / (2 * sigma**2)))
 
@@ -190,12 +191,14 @@ def generate_gaussian_pyramid2(filename, size=10, resolution=0.5, sigma=3, heigh
             faces.append([bottom_left_base, top_left_base, bottom_right_base])
             faces.append([top_left_base, top_right_base, bottom_right_base])
 
-    # Write to OBJ file
+    # Write to OBJ file — each face is written twice (normal + reversed winding)
+    # so the mesh is double-sided and never see-through from any camera angle.
     with open(filename, 'w') as f:
         for vertex in vertices:
             f.write(f"v {vertex[0]} {vertex[1]} {vertex[2]}\n")
         for face in faces:
             f.write(f"f {face[0]+1} {face[1]+1} {face[2]+1}\n")
+            f.write(f"f {face[2]+1} {face[1]+1} {face[0]+1}\n")
 
 
 def generate_gaussian_pyramid3(filename, size=10, resolution=0.5, sigma=3, height=5, noise_scale=0.5, noise_factor=1.0):
@@ -324,8 +327,9 @@ def generate_gaussian_pyramid4(filename, size=10, resolution=0.5, sigma=3, heigh
         for face in faces:
             f.write(f"f {face[0]+1} {face[1]+1} {face[2]+1}\n")
 
-# Generate the OBJ file
-generate_gaussian_pyramid4("./shapes/gaussian_pyramid.obj")
+# Generate the OBJ file — size=47 (fills 50-unit arena), sigma=16 (proportionally scaled slope)
+# Extra ~2 units of size ensures the base loads slightly below the arena floor at z=-2
+generate_gaussian_pyramid2("./shapes/gaussian_pyramid.obj", size=47, sigma=16, height=5)
 
 
 # Generate the OBJ file

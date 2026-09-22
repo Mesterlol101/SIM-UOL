@@ -1,0 +1,549 @@
+Introduction
+Breast cancer remains one of the most prevalent cancers among women worldwide and continues to be a significant health concern. Early detection plays a critical role in improving treatment outcomes and increasing survival rates. Mammography is currently the most widely used imaging modality for breast cancer screening due to its ability to detect abnormalities before clinical symptoms become apparent. However, interpreting mammography images is a complex and time-consuming process that requires substantial expertise from radiologists. Factors such as image quality, breast tissue density, and subtle tumour characteristics can make diagnosis challenging, potentially leading to missed detections or false-positive results.
+
+In recent years, Artificial Intelligence (AI) and Deep Learning (DL) have emerged as promising technologies for assisting medical professionals in analysing medical images. Deep learning models, particularly Convolutional Neural Networks (CNNs), have achieved remarkable success in image classification, object detection, and segmentation tasks. These advances have encouraged researchers to apply deep learning techniques to mammography analysis, with the goal of improving breast cancer detection accuracy and supporting clinical decision-making. Numerous studies have demonstrated that CNN-based systems are capable of identifying breast abnormalities with performance levels comparable to traditional computer-aided diagnosis systems.
+The development of deep learning models for breast cancer detection has been facilitated by the availability of large-scale annotated datasets. One of the most widely used public datasets is the Curated Breast Imaging Subset of the Digital Database for Screening Mammography (CBIS-DDSM), introduced by Lee et al. (2017). The dataset provides mammography images together with pathology information and lesion annotations, enabling researchers to develop, train, and evaluate deep learning models in a consistent and reproducible manner. As a result, CBIS-DDSM has become a benchmark dataset for mammography classification and breast cancer detection research.
+
+Existing research has demonstrated the effectiveness of deep learning methods for analysing mammography images. Aly et al. (2022) showed that CNN-based classification and segmentation techniques can successfully identify suspicious breast lesions and distinguish between benign and malignant abnormalities. Furthermore, studies investigating the robustness and generalisation of deep learning models have highlighted the importance of evaluating model performance across different datasets and clinical environments to ensure reliability and reproducibility. These findings indicate that deep learning has significant potential to support breast cancer screening and diagnosis.
+
+Despite these advancements, many breast cancer detection systems continue to analyse mammography images independently, treating each image as a separate input during classification. In contrast, radiologists typically examine multiple mammographic views of the same breast when making diagnostic decisions. Standard screening procedures commonly include Cranio-Caudal (CC) and Medio-Lateral Oblique (MLO) views, each providing complementary information about breast tissue structures and abnormalities. Analysing both views together allows radiologists to obtain a more comprehensive understanding of suspicious regions and improves diagnostic confidence.
+
+To better replicate clinical practice, researchers have begun investigating multi-view deep learning approaches for mammography analysis. SCREENet (Agarwal et al., 2020) demonstrated that combining information from multiple mammographic views through deep convolutional neural networks can improve classification performance compared to traditional single-view methods. Similarly, Chen et al. (2022) proposed a multi-view learning framework that leverages local co-occurrence and global consistency between CC and MLO images to enhance mammogram classification and improve model generalisation. These studies suggest that incorporating complementary information from multiple mammographic views can lead to more robust and accurate breast cancer detection systems.
+
+However, many existing multi-view approaches rely on specialised feature fusion strategies, advanced network architectures, or computationally intensive training procedures. Such methods may be difficult to reproduce and deploy in practical settings, particularly when computational resources are limited. Furthermore, there remains limited research evaluating whether simpler dual-input CNN architectures can effectively utilise information from paired mammographic views while maintaining strong classification performance on publicly available datasets such as CBIS-DDSM.
+Therefore, this project proposes the development of a Multi-View Deep Learning Mammography System for Breast Cancer Detection using the CBIS-DDSM dataset. The project aims to investigate whether combining CC and MLO mammography views through a practical dual-input CNN architecture can improve classification performance compared to conventional single-view approaches. Transfer learning techniques and modern CNN architectures will be explored to extract meaningful image features, while feature fusion mechanisms will be used to integrate information from multiple views before classification.
+The effectiveness of the proposed system will be evaluated using commonly adopted performance metrics, including accuracy, precision, recall, F1-score, and Receiver Operating Characteristic Area Under the Curve (ROC-AUC). Experimental comparisons will be conducted between single-view and multi-view models to determine whether multi-view feature fusion contributes to improved breast cancer detection performance. Through this investigation, the project seeks to contribute to the growing body of research on deep learning for medical imaging while exploring a practical approach that more closely reflects real-world mammography screening procedures.
+Literature Review
+This literature review examines the datasets, methodologies, and deep learning architectures relevant to breast cancer detection using mammography images. Particular attention is given to multi-view learning approaches and the limitations of existing systems, which motivate the proposed project. 
+
+1. CBIS-DDSM: A Foundation for Deep Learning Research
+A major factor contributing to the success of deep learning in breast cancer detection is the availability of large, annotated datasets. Lee et al. (2017) introduced the Curated Breast Imaging Subset of the Digital Database for Screening Mammography (CBIS-DDSM), which has become one of the most widely used public datasets for mammography research.
+The CBIS-DDSM dataset contains digitised mammography images together with pathology information, lesion annotations, and metadata describing abnormalities. The dataset was specifically curated to improve the usability and reproducibility of machine learning experiments. Prior to CBIS-DDSM, researchers often faced difficulties due to inconsistent image formats and limited annotation quality. By standardising the dataset and providing detailed annotations, Lee et al. enabled more reliable comparisons between machine learning models.
+One of the primary strengths of CBIS-DDSM is its accessibility and widespread adoption within the research community. Many studies investigating CNN-based breast cancer classification utilise this dataset, making it a suitable benchmark for evaluating model performance. However, the work of Lee et al. focuses primarily on dataset preparation rather than the development of advanced deep learning architectures, and the dataset has limitations that are relevant across the reviewed literature. CBIS-DDSM exhibits a meaningful class imbalance, with benign cases outnumbering malignant ones, which can bias classifiers towards the majority class and inflate accuracy metrics unless explicitly addressed through loss weighting or resampling. Its scale is also modest relative to large-scale clinical screening databases, which constrains the complexity of models that can be reliably trained without overfitting. Furthermore, Makram et al. (2026) later identified patient-level data partitioning — ensuring no patient's images appear in both training and test splits — as critical to avoiding inflated performance estimates, a methodological concern that many earlier studies using CBIS-DDSM did not adequately address. These characteristics of the dataset have important implications for experimental design and result interpretation throughout the reviewed literature.
+
+2. Deep Learning Approaches for Mammography Classification
+The application of CNNs to mammography analysis has received significant attention due to their ability to automatically learn discriminative image features. Traditional computer-aided diagnosis systems relied heavily on handcrafted features designed by domain experts. While these approaches achieved moderate success, they often struggled to generalise across datasets and imaging conditions.
+Aly et al. (2022) proposed a deep learning framework that combines image segmentation and classification techniques for mammography analysis. Their approach utilised CNN-based architectures alongside image preprocessing methods to improve lesion detection and classification performance. The study demonstrated that deep learning can effectively distinguish between benign and malignant breast abnormalities while reducing the need for manual feature engineering.
+One notable strength of this work is its integration of segmentation and classification within a unified pipeline. By identifying suspicious regions before classification, the model is able to focus on clinically relevant image areas. Furthermore, the use of transfer learning enabled the model to leverage knowledge learned from large image datasets, reducing training time and improving performance.
+Despite these advantages, the study primarily analyses mammography images independently. Each image is treated as a separate input, without considering information from additional mammographic views. As a result, potentially valuable contextual information available across multiple views may not be fully utilised.
+The findings of Aly et al. confirm that CNN-based pipelines can effectively distinguish benign from malignant mammographic abnormalities. However, the restriction to single-view analysis represents a fundamental clinical limitation that architecture alone cannot overcome. In practice, a lesion may be clearly visible in one view while partially obscured by overlapping dense tissue in the other; a model that processes views independently has no mechanism to resolve such ambiguities. This gap between single-view AI analysis and multi-view clinical practice is a core motivation for investigating dual-input architectures.
+
+
+3. Robustness and Generalisation of Deep Learning Models
+Although many deep learning models achieve high performance on benchmark datasets, concerns remain regarding their ability to generalise across different clinical environments. Models trained on one dataset may perform poorly when evaluated on data acquired from different hospitals, imaging devices, or patient populations.
+Elter et al. (2024) investigated the robustness of deep learning models across multiple mammography datasets. Their work emphasised the importance of reproducibility and highlighted challenges associated with deploying AI systems in real-world healthcare settings. The study found that strong performance on a single dataset does not necessarily guarantee successful generalisation to other datasets.
+The significance of this research lies in its focus on model reliability rather than solely maximising classification accuracy. In medical applications, reliability and reproducibility are critical because incorrect predictions may have serious consequences for patient care. The study therefore encourages researchers to evaluate models using rigorous methodologies and multiple performance metrics.
+However, Elter et al. primarily focused on evaluating existing architectures rather than proposing new methods for improving classification performance. While the research provides valuable insights into model evaluation, it does not explore whether alternative architectural designs, such as multi-view learning systems, may inherently be more robust by capturing richer representations from multiple perspectives. The broader implication of their findings is that accuracy reported on a single benchmark cannot be taken as a reliable indicator of clinical utility. Performance differences between single-view and multi-view models must therefore be evaluated using multiple complementary metrics — precision, recall, F1-score, and AUC — and interpreted with explicit awareness of dataset-specific characteristics rather than as universally generalisable conclusions.
+
+4. Emergence of Multi-View Deep Learning
+One limitation of many mammography classification systems is their reliance on single-image analysis. In contrast, radiologists typically examine multiple mammographic views before making diagnostic decisions. The two most common views are the Cranio-Caudal (CC) view and the Medio-Lateral Oblique (MLO) view. Each view captures different anatomical information and may reveal abnormalities that are less visible in the other.
+To address this limitation, researchers have begun developing multi-view deep learning architectures that combine information from multiple mammographic images.
+Agarwal et al. (2020) introduced SCREENet, a multi-view deep convolutional neural network designed for mammography classification. SCREENet processes multiple mammographic views simultaneously and combines information through feature fusion techniques. The study demonstrated that multi-view analysis can improve classification performance compared to approaches relying on individual images.
+A key strength of SCREENet is its closer alignment with real clinical workflows. By incorporating information from multiple views, the system more closely resembles the diagnostic process used by radiologists. The results suggest that complementary information from different mammographic perspectives can contribute to improved classification accuracy.
+However, a critical limitation of the SCREENet study is that it was evaluated on synthetic mammographic screening scans rather than real clinical mammography images. Synthetic data may not fully capture the variability in tissue density, image quality, and lesion morphology present in clinical datasets such as CBIS-DDSM, raising questions about whether the reported performance advantages extend to real-world settings. Furthermore, the feature fusion strategies employed by SCREENet are relatively straightforward compared to the attention-based and transformer-based mechanisms developed in subsequent work, which suggests that the performance gains observed may not represent the ceiling of what multi-view learning can achieve. Despite these limitations, SCREENet establishes an important empirical principle: that the information contained across multiple mammographic views is complementary, and that no single-view model, regardless of architectural depth, can access the full diagnostic signal available to a multi-view system.
+
+5. Advanced Multi-View Learning Approaches
+Building upon earlier multi-view architectures, Chen et al. (2022) proposed a framework based on local co-occurrence and global consistency learning. The motivation behind the study was that corresponding mammographic views contain complementary information that should be learned jointly rather than independently.
+The proposed framework introduces mechanisms that encourage the model to learn relationships between corresponding CC and MLO images. Local co-occurrence learning captures detailed image-level relationships, while global consistency learning promotes agreement between representations extracted from different views. The authors demonstrated that these strategies improve classification performance and model generalisation.
+One of the primary contributions of this work is its attempt to mimic the way radiologists integrate information from multiple mammographic views. By explicitly modelling relationships between views, the framework extracts richer feature representations than traditional single-view CNNs.
+Despite its promising results, the architecture introduces additional complexity and computational requirements. Implementing advanced consistency learning mechanisms may be challenging in resource-constrained environments. Furthermore, the increased complexity can make model training and optimisation more difficult.
+The work of Chen et al. demonstrates that explicitly modelling inter-view relationships — rather than simply pooling view features together — produces qualitatively richer representations. However, the increased complexity raises a fundamental question for the field: whether the performance gains attributed to multi-view analysis arise primarily from the sophistication of the fusion mechanism itself, or whether they reflect a more general benefit of exposing the network to complementary visual information from both views. If the latter, then a simpler dual-input architecture that learns from concatenated CC and MLO features may capture much of the benefit at a fraction of the implementation cost. This question directly motivates the comparative evaluation proposed in this project.
+
+6. Attention-Based Multi-View Fusion in Mammography Classification
+Makram et al. (2026) presented a leakage-controlled deep learning framework for breast cancer classification using the CBIS-DDSM dataset, directly addressing a methodological limitation common in prior research: the risk of patient-level data leakage during train-test splitting. Their pipeline applies patient-level stratification prior to augmentation, ensuring that no patient appears in both training and testing sets, thereby producing more reliable and reproducible performance estimates.
+The architecture employs a ResNet50 backbone to extract features from paired CC and MLO mammographic views. Rather than combining view representations through simple feature concatenation, the study introduces an Inter-View Attention Fusion (IVAF) module. This lightweight gated convolutional module generates a spatial attention map from the concatenated CC and MLO feature tensors, allowing the network to adaptively weight the contribution of each view at every spatial position and feature channel. A two-stage transfer learning strategy was adopted, progressively fine-tuning the ResNet50 backbone after an initial phase of training only the classification head. The framework also incorporates class-imbalanced loss weighting, ROI-guided preprocessing, and Grad-CAM visualisation for model interpretability. Under the evaluated CBIS-DDSM protocol, the model achieved an accuracy of 97.12%, sensitivity of 96.44%, specificity of 97.68%, and AUC-ROC of 0.9876.
+The primary strength of this work lies in its rigorous experimental methodology, particularly the leakage-controlled evaluation protocol and the use of adaptive attention-based fusion rather than simple concatenation. These contributions demonstrate that careful data partitioning and architectural design both contribute significantly to classification performance.
+However, the evaluation was conducted exclusively on CBIS-DDSM, raising questions about generalisation to other datasets and clinical environments. The authors acknowledge this limitation and recommend external validation on additional datasets such as INbreast or VinDr-Mammo. For the proposed project, this study reinforces the value of attention-based feature fusion and rigorous train-test partitioning, and sets a strong performance benchmark for CBIS-DDSM-based multi-view classification.
+
+7. Transformer and Graph-Based Multi-View Architectures
+Manigrasso et al. (2025) conducted an extensive comparative evaluation of multi-view deep learning architectures for mammography classification, investigating transformer-based and graph-based approaches against conventional CNN baselines. The study addressed a fundamental challenge in mammography screening: combining information from all four mammographic views — left and right CC, and left and right MLO — to produce an exam-level classification score without relying on pixel-level lesion annotations.
+Several architectures were evaluated, including a CNN baseline, an Anatomy-aware Graph Convolutional Network (AGN4V), and the proposed Mammography Multi-View Transformer (MaMVT). Experiments were conducted on the CSAW dataset under a weakly-supervised setting. Visual Transformers were found to outperform both CNN and graph-based architectures, achieving an AUC of 80.1 compared to 74.9 for graph-based models. The advantage of transformers was attributed to cross-view self-attention mechanisms, which capture long-range dependencies across multiple mammographic views more effectively than the local receptive fields of convolutional networks.
+A key finding was that different architectures exhibit complementary strengths and weaknesses. CNN-based models demonstrated stronger lesion localisation, while transformer-based models captured broader breast parenchymal patterns. The study therefore suggests that ensemble approaches combining multiple architectures may provide the most comprehensive diagnostic performance.
+While the results provide strong evidence for transformer superiority in multi-view settings, the study notes the significant data requirements of Vision Transformers and recommends self-supervised pre-training to reduce dependency on large annotated datasets. Furthermore, the evaluation was conducted on the CSAW dataset rather than CBIS-DDSM, limiting direct comparability with other reviewed studies.
+For the proposed project, this work highlights that architectures capable of modelling cross-view relationships can extract richer feature representations than simpler dual-input CNNs. It also contextualises the limitations of the concatenation-based fusion strategy adopted in this project and identifies transformer-based fusion as a promising direction for future work.
+8. Comparison of Existing Research
+Across the reviewed literature, several interconnected themes emerge that collectively define the current state of deep learning for mammography classification.
+The first theme is the transition from handcrafted to learned features. Aly et al. (2022) illustrate that CNN-based pipelines consistently outperform traditional expert-designed feature extraction, eliminating the bottleneck of manual feature engineering and enabling end-to-end learning directly from raw images. Transfer learning, employed across virtually all reviewed studies, has become an essential technique for overcoming the limited scale of medical imaging datasets by initialising networks with representations learned from large natural image corpora.
+The second theme is the shift from single-view to multi-view analysis. SCREENet (Agarwal et al., 2020), Chen et al. (2022), Makram et al. (2026), and Manigrasso et al. (2025) all converge on the finding that multi-view architectures outperform single-view models by leveraging the complementary diagnostic information contained in CC and MLO mammograms. This shift reflects a broader recognition that AI systems should align more closely with clinical workflows rather than treating each image as an isolated input.
+The third theme is the evolution of fusion strategies. Early multi-view approaches relied on relatively simple feature combination mechanisms. Chen et al. introduced explicit inter-view consistency learning to model relationships between views. Makram et al. demonstrated that attention-based fusion, which adaptively weights spatial contributions from each view, outperforms naive concatenation. Manigrasso et al. showed that transformer architectures with cross-view self-attention mechanisms provide further gains, particularly in capturing long-range spatial dependencies that convolutional operations cannot efficiently model. Together, these studies chart a clear progression in fusion sophistication.
+A fourth recurring theme is methodological rigour. Elter et al. (2024) highlight that strong benchmark performance does not guarantee clinical generalisation, while Makram et al. (2026) demonstrate that patient-level data partitioning is essential to prevent leakage that inflates reported metrics. Class imbalance, evident in CBIS-DDSM, is addressed inconsistently across studies, yet has a direct impact on the clinical relevance of precision and recall values.
+However, a consistent trade-off exists between performance and practical accessibility. As fusion architectures grow more sophisticated, they impose increasing demands on labelled data, computational resources, and implementation expertise. This creates a genuine gap in the literature between high-performing but complex systems and the practical needs of resource-constrained research environments.
+9. Research Gap and Project Motivation
+The reviewed literature demonstrates significant progress in breast cancer detection using deep learning. Public datasets such as CBIS-DDSM have enabled extensive experimentation, while CNN-based approaches have achieved strong classification performance. Furthermore, multi-view learning has emerged as a major research direction capable of leveraging complementary information from CC and MLO mammography views.
+Recent work by Makram et al. (2026) demonstrates that sophisticated attention-based fusion and rigorous leakage-controlled evaluation protocols can achieve state-of-the-art performance on CBIS-DDSM. Meanwhile, Manigrasso et al. (2025) show that transformer-based architectures with cross-view attention mechanisms outperform conventional CNNs for multi-view mammography classification. Together, these studies represent the current frontier of the field and provide important context for evaluating the proposed project.
+Despite these advances, many high-performing multi-view systems rely on specialised fusion modules, large-scale datasets, or computationally intensive transformer architectures that may be difficult to reproduce and deploy in resource-constrained environments. Limited research has investigated whether a simpler dual-input CNN architecture using feature concatenation can effectively utilise paired CC and MLO views while maintaining competitive performance on CBIS-DDSM.
+Therefore, this project aims to develop and evaluate a practical multi-view deep learning mammography system capable of combining CC and MLO images for breast cancer classification. The project will compare single-view and multi-view approaches to determine whether multi-view feature fusion provides measurable improvements in classification performance. By doing so, the research seeks to contribute to the growing body of knowledge surrounding practical and effective deep learning solutions for breast cancer detection.
+
+
+
+
+Design
+Project Overview
+This project aims to investigate whether a multi-view deep learning model can improve breast cancer classification from mammography images compared with a conventional single-view model. The project will use the Curated Breast Imaging Subset of the Digital Database for Screening Mammography (CBIS-DDSM) dataset, which contains mammographic images together with diagnostic information.
+The main research question is:
+Can a multi-view convolutional neural network using both CC and MLO mammography views improve breast cancer classification performance compared with a single-view CNN?
+The project will focus on binary classification, where the model predicts whether a mammographic case is benign or malignant. The system is intended as a research prototype rather than a clinical diagnostic tool. Its purpose is to investigate whether information from multiple mammographic views can be effectively combined using deep learning.
+The overall project workflow is: CBIS-DDSM data is loaded and CC/MLO images are paired at the patient level, preprocessed and split into training and test sets, fed into both the single-view baseline and multi-view CNN during training, and then evaluated side by side using a common set of metrics to determine whether multi-view feature fusion provides a measurable improvement.
+
+This structure allows the project to isolate the effect of multi-view learning. Rather than simply developing a model and reporting its accuracy, the proposed model will be compared against a simpler baseline under comparable experimental conditions.
+Domain, Users and Potential Use Case
+The project is situated within the fields of artificial intelligence, deep learning, medical image analysis and healthcare technology.
+The primary potential users are radiologists and breast cancer screening specialists. In a future clinical system, a deep learning model could potentially be incorporated into a computer-aided diagnosis system to provide an additional assessment of mammographic images.
+The proposed system would not replace a radiologist. Instead, a possible workflow would be:
+Mammography Examination
+                 │
+                ▼
+         Radiologist
+                 │
+    ┌────┴────┐
+    │                        │
+    ▼                      ▼
+  CC View        MLO View
+    │                        │
+    └────┬────┘
+                ▼
+   Deep Learning Model
+                 │
+                ▼
+ Benign / Malignant
++ Prediction Confidence
+                 │
+                ▼
+Additional Information
+for Radiologist
+
+The system could therefore potentially act as a decision-support tool, where the model provides an additional prediction rather than making an autonomous clinical decision.
+Secondary users could include medical researchers and developers working on computer-aided breast cancer detection systems.
+Dataset and Data Preparation
+The project will use the CBIS-DDSM dataset as the primary source of mammography images. The dataset contains mammograms from different breast examinations and provides diagnostic information that can be used as classification labels.
+A key requirement of the proposed multi-view approach is that corresponding mammographic views must be correctly paired. Mammography examinations commonly contain different views of the same breast, including the Cranio-Caudal (CC) and Medio-Lateral Oblique (MLO) views.
+The preprocessing pipeline will therefore identify corresponding CC and MLO images and construct paired samples:
+CC View
+MLO View
+         Label
+Patient A – CC
+Patient A – MLO
+   Benign
+Patient B – CC
+Patient B – MLO
+ Malignant
+
+The paired dataset will then be divided into training, validation and testing subsets.
+Importantly, the split will be performed at the patient/case level rather than at the individual image level. This reduces the possibility of information leakage, where images belonging to the same patient could appear in both the training and testing sets.
+Images will be resized to 224 × 224 pixels, converted to tensors and normalised before being passed to the CNN. Data augmentation will be considered during model training to improve generalisation and reduce overfitting.
+
+
+
+
+The preprocessing pipeline can therefore be summarised as:
+Raw CBIS-DDSM
+     │
+     ▼
+Remove / Handle Invalid Cases
+     │
+     ▼
+Identify Patient/Breast
+     │
+     ▼
+Pair CC + MLO Images
+     │
+     ▼
+Patient-Level Dataset Split
+     │
+     ▼
+Resize to 224 × 224
+     │
+     ▼
+Normalisation
+     │
+     ▼
+Training Augmentation
+     │
+     ▼
+CNN Input
+
+
+
+
+
+Baseline Single-View CNN
+A single-view CNN will be developed as the baseline model. The purpose of this model is to provide a reference against which the proposed multi-view architecture can be evaluated.
+The baseline will use only one mammographic view, initially the CC view:
+CC Mammogram
+     │
+     ▼
+ ResNet18
+     │
+     ▼
+Feature Vector
+     │
+     ▼
+Fully Connected Layer
+     │
+     ▼
+Benign / Malignant
+The model will use a pretrained ResNet18 backbone. The original classification layer will be removed and replaced with a new classifier designed for binary breast cancer classification.
+ResNet18 was selected for the prototype because it provides a relatively lightweight CNN architecture while still providing sufficient capacity for image feature extraction. Using a pretrained network also reduces the computational requirements associated with training a deep model from scratch.
+The single-view model provides an important experimental baseline because any improvement from the proposed multi-view architecture can then be attributed more directly to the use of additional mammographic information.
+
+
+Proposed Multi-View CNN
+The main technical feature of the project is a multi-view CNN that processes both CC and MLO mammograms.
+The proposed architecture is:
+                 ┌──► ResNet18 ──► CC Features ──┐
+CC Image ─────────—-------┤                            │
+                 │                                ▼
+                 │                         Feature Fusion
+                 │                                │
+                 │                                ▼
+                 │                        Fully Connected
+                 │                                 │
+                 │                                ▼
+                 │                        Benign / Malignant
+                 │
+MLO Image ────────—------┤                               ▲
+                 │                                │
+                 └──► ResNet18 ──► MLO Features ──┘
+Both images are passed through the CNN feature extractor. The resulting feature vectors are then combined using feature concatenation.
+For example:
+CC features = [f1, f2, f3, ..., fn]
+
+MLO features = [g1, g2, g3, ..., gn]
+
+                ↓
+
+Combined = [f1, ..., fn, g1, ..., gn]
+The combined representation is then passed to a fully connected classifier to produce the final prediction.
+The prototype will initially use a shared ResNet18 feature extractor for both views. This reduces the number of parameters and computational requirements while allowing the same feature extraction process to be applied consistently to both views.
+More sophisticated architectures, such as separate CNN branches, attention-based fusion and alternative backbone networks, may be investigated if time and computational resources permit.
+Model Training
+Both the baseline and multi-view models will be trained using PyTorch.
+Training uses the Adam optimiser with class-weighted Cross-Entropy Loss to address the benign/malignant class imbalance in CBIS-DDSM. Differential learning rates are applied — a lower rate for the pretrained encoder layers and a higher rate for the newly initialised classifier head — to preserve the pretrained representations during early training. A CosineAnnealingLR scheduler reduces the learning rate smoothly over the training epochs. Training and validation loss are recorded each epoch to monitor convergence and detect overfitting.
+
+Evaluation Strategy
+The effectiveness of the proposed multi-view model will be evaluated by comparing its performance against the single-view baseline.
+The primary evaluation metrics will be:
+Accuracy
+Accuracy measures the proportion of all predictions that are correct.
+Accuracy=TP+TN+FP+FNTP+TN​
+Precision
+Precision measures how many cases predicted as malignant were actually malignant.
+Precision=TP+FPTP​
+This is useful for evaluating the number of false positive predictions.
+Recall / Sensitivity
+Recall measures the proportion of actual malignant cases correctly identified by the model.
+Recall=TP+FNTP​
+This is particularly important in breast cancer detection because false negatives represent malignant cases that the model fails to identify.
+F1-score
+F1-score provides a balance between precision and recall.
+F1=2×Precision+Recall Precision×Recall​
+ROC-AUC
+ROC-AUC measures the model's ability to distinguish between benign and malignant cases across different classification thresholds. A value closer to 1 indicates stronger discrimination.
+These metrics will be considered together rather than relying solely on accuracy. This is important because medical datasets may contain class imbalance and because false negatives and false positives have different implications.
+A confusion matrix will also be generated to provide a visual representation of:
+True positives
+True negatives
+False positives
+False negatives
+The main experimental comparison is:
+Model	Input	Backbone
+Single-View CNN	CC only	ResNet50 / DenseNet121 / EfficientNet-B0
+Multi-View CNN	CC + MLO	Shared ResNet18
+
+The multi-view model will be considered beneficial if it demonstrates a consistent improvement over the single-view baseline across relevant evaluation metrics rather than simply achieving a higher accuracy.
+Technologies and Tools
+The project will be implemented using Python and PyTorch.
+The primary technologies are:
+Technologies
+Purpose
+Python
+Main programming language
+PyTorch
+Deep learning model development
+Torchvision
+CNN architectures and image preprocessing
+NumPy
+Numerical operations
+Pandas
+Dataset and metadata processing
+Scikit-learn
+Evaluation metrics
+Matplotlib
+Visualisation
+CUDA
+GPU acceleration
+
+An NVIDIA RTX 3070 GPU will be used to accelerate model training. This provides sufficient computational resources for the ResNet50 and DenseNet121 baseline experiments and allows knowledge distillation experiments to be run without prohibitive training times.
+Experimental Plan
+The implementation will be developed incrementally rather than attempting to build the complete system immediately.
+Phase 1 – Dataset Preparation
+Download CBIS-DDSM.
+Examine dataset structure.
+Identify corresponding CC and MLO views.
+Construct paired dataset.
+Perform patient-level train/validation/test split.
+Implement preprocessing.
+Phase 2 – Baseline
+Implement configurable Single-View CNN (ResNet50 / DenseNet121 / EfficientNet-B0).
+Train baseline.
+Record training and validation performance.
+Generate confusion matrix and evaluation metrics.
+Phase 3 – Multi-View Model
+Implement dual-input CNN with shared ResNet18 encoder.
+Extract features from CC and MLO images.
+Implement feature concatenation.
+Train the multi-view model.
+Record performance.
+Phase 4 – Comparison
+Compare single-view and multi-view models.
+Analyse accuracy, precision, recall, F1 and ROC-AUC.
+Examine confusion matrices.
+Compare training behaviour and computational requirements.
+Phase 5 – Further Experiments
+If the core system performs successfully, additional experiments may investigate:
+Alternative feature fusion strategies (e.g. attention-based fusion)
+Separate encoder branches for CC and MLO with equivalent backbone sizes
+ROC-AUC computation and ROC curve generation
+Grad-CAM interpretability visualisations
+This staged approach ensures that a functioning baseline and multi-view model are completed before optional improvements are attempted.
+Risks and Contingency Plans
+Several risks have been considered during the design.
+Risk
+Mitigation
+Dataset imbalance
+Class weighting and appropriate evaluation metrics
+Overfitting
+Data augmentation, dropout and early stopping
+GPU limitations
+Use lightweight models and reduce batch size
+Incorrect CC/MLO pairing
+Automated metadata-based pairing and manual validation
+Multi-view model performs worse
+Analyse fusion method and retain single-view model as baseline
+Training takes longer than expected
+Prioritise single-view baseline before testing multi-view and distillation experiments
+Dataset processing difficulties
+Complete baseline using individual images before implementing pairing
+
+The most important contingency is that the single-view CNN will remain a valid project outcome even if the multi-view architecture does not outperform it. This allows the project to provide a meaningful experimental conclusion rather than assuming in advance that multi-view learning must be superior.
+Work Plan
+The project will be developed incrementally to ensure that the core system is completed before additional experiments are attempted. The work plan prioritises the development of a functioning single-view baseline and multi-view CNN before investigating more complex architectures or optimisation techniques. This reduces project risk because a working baseline will be available even if the multi-view approach requires additional development time.
+The project is divided into six main phases, covering literature review, dataset preparation, baseline development, multi-view development, evaluation and final documentation.
+Phase 1 – Literature Review and Project Preparation
+Weeks 10–11
+The first phase will establish the theoretical and technical foundation of the project.
+Tasks:
+Review recent research on deep learning for breast cancer detection.
+Review CNN-based mammography classification methods.
+Investigate existing multi-view mammography approaches.
+Compare different feature-fusion strategies.
+Finalise the research question and project scope.
+Confirm the evaluation metrics and experimental methodology.
+Deliverables:
+Completed literature review.
+Finalised research question.
+Confirmed model architecture and evaluation strategy.
+This phase will also identify suitable backup approaches in case the planned multi-view architecture proves difficult to implement.
+Phase 2 – Dataset Preparation and Preprocessing
+Weeks 12–13
+The second phase will prepare the CBIS-DDSM dataset for model development.
+Tasks:
+Download and organise the CBIS-DDSM dataset.
+Examine the dataset metadata and image structure.
+Identify corresponding CC and MLO mammographic views.
+Develop an automated pairing process.
+Check the accuracy of the CC/MLO pairing.
+Create patient-level training, validation and testing splits.
+Implement image resizing and normalisation.
+Investigate class distribution.
+Implement initial data augmentation if required.
+Deliverables:
+Cleaned and organised dataset.
+Paired CC/MLO dataset.
+Training, validation and testing datasets.
+Preprocessing pipeline.
+An important checkpoint will be performed at the end of this phase to confirm that the dataset can be successfully loaded by PyTorch and that the paired images correspond to the same breast/case.
+Contingency: If automated CC/MLO pairing takes longer than expected, development will initially continue using the single-view dataset while the pairing process is refined. This prevents dataset-processing problems from blocking model development.
+
+
+Phase 3 – Single-View Baseline Development
+Weeks 14–15
+A single-view CNN will be developed before implementing the proposed multi-view architecture.
+Tasks:
+Implement the PyTorch dataset loader.
+Implement a configurable pretrained CNN baseline (ResNet50, DenseNet121, EfficientNet-B0).
+Replace the original classifier with a binary classification head.
+Configure Adam with differential learning rates, class-weighted loss, and CosineAnnealingLR scheduler.
+Train the model using the training dataset.
+Monitor validation loss and performance.
+Generate evaluation metrics (accuracy, precision, recall, F1).
+Generate a confusion matrix and training curves.
+Deliverables:
+Working single-view CNN.
+Trained baseline model.
+Initial performance results.
+Training and validation plots.
+The baseline is an important milestone because it provides a functioning machine learning system even if later multi-view development encounters difficulties.
+Phase 4 – Multi-View CNN Development
+Weeks 16–17
+The proposed multi-view architecture will then be developed using the same basic CNN backbone as the baseline.
+Tasks:
+Implement the dual-input dataset loader.
+Pass CC and MLO images through the CNN feature extractor.
+Implement feature fusion using feature concatenation.
+Connect the fused representation to the classification layer.
+Train the multi-view model.
+Monitor training and validation performance.
+Compare the training behaviour with the single-view model.
+Perform initial hyperparameter experiments.
+Deliverables:
+Working multi-view CNN.
+Trained multi-view model.
+Initial comparison with the single-view baseline.
+The first implementation will use the relatively simple ResNet18 + feature concatenation architecture. This is deliberately chosen as the core implementation because it is computationally feasible and allows the effect of multi-view information to be investigated without introducing unnecessary architectural complexity.
+If the model is successfully implemented ahead of schedule, additional fusion methods or CNN backbones can be investigated.
+Phase 5 – Evaluation and Experimental Comparison
+Weeks 18–19
+The fifth phase will provide the main experimental evaluation of the project.
+Tasks:
+Evaluate the single-view model on the test dataset.
+Evaluate the multi-view model on the same test dataset.
+Calculate accuracy.
+Calculate precision.
+Calculate recall/sensitivity.
+Calculate F1-score.
+Calculate specificity.
+Calculate ROC-AUC.
+Generate confusion matrices.
+Generate ROC curves.
+Compare training and validation curves.
+Compare computational requirements.
+Analyse cases where the two models produce different predictions.
+The primary experiment will compare:
+Model
+Input
+Purpose
+Single-View CNN (ResNet50/DenseNet121/EfficientNet)
+CC
+Baseline
+Multi-View CNN (shared ResNet18)
+CC + MLO
+Proposed approach
+
+The key question will be whether incorporating the additional MLO view produces a measurable improvement over the single-view baseline.
+Deliverables:
+Complete evaluation results.
+Comparison tables and figures.
+Analysis of model performance.
+Identification of strengths and limitations.
+If the multi-view model does not outperform the baseline, this will not be considered a failure. The result will instead be analysed to determine whether the feature-fusion method, dataset characteristics or model architecture could explain the outcome.
+Phase 6 – Final Improvements and Documentation
+Weeks 20–22
+The final phase will focus on consolidating the results and completing the project documentation.
+Tasks:
+Review experimental results.
+Repeat important experiments where necessary.
+Address remaining implementation issues.
+Finalise figures and tables.
+Document the methodology.
+Discuss limitations and threats to validity.
+Compare results with related literature.
+Write the final dissertation.
+Prepare the final presentation.
+Perform final testing of the implementation.
+Deliverables:
+Final trained models.
+Final experimental results.
+Completed dissertation.
+Final presentation.
+Reproducible project code.
+
+Implementation
+Prototype Implementation
+The implementation consists of four primary components: a data pipeline, a configurable single-view baseline CNN, a dual-input multi-view CNN, and a knowledge distillation pipeline. All components are implemented in Python using PyTorch, with torchvision providing pretrained backbone architectures and scikit-learn supplying evaluation metrics.
+
+Data Pipeline
+A custom MultiViewDataset class was developed to return paired CC and MLO mammography images simultaneously from each CBIS-DDSM sample. CC and MLO images are matched at the case level using patient identifiers from the dataset's DICOM metadata, ensuring that each sample consists of two views of the same breast from the same examination.
+
+Two separate preprocessing pipelines are applied depending on the data split. The training pipeline applies stochastic data augmentation — random horizontal flipping, rotation up to ±10°, and colour jitter of ±20% brightness and contrast — followed by resizing to 224×224 pixels and normalisation. The validation and test pipeline applies only resizing and normalisation, ensuring evaluation is performed on unmodified images. This separation prevents augmented data from distorting performance estimates during testing.
+
+To address the class imbalance inherent in CBIS-DDSM, where benign cases outnumber malignant ones, inverse-frequency class weights are computed from the training label distribution:
+
+weight_c = 1 / count_c
+
+These weights are passed to the Cross-Entropy Loss function, penalising misclassification of the minority malignant class more heavily.
+
+Single-View Baseline CNN
+The SingleViewCNN class implements a configurable transfer learning architecture supporting three pretrained backbones: ResNet50 (2048-dimensional feature output), DenseNet121 (1024-dimensional), and EfficientNet-B0 (1280-dimensional). In each case, the original classification head is removed and replaced with a binary classifier: Linear(feat_size → 256), ReLU, Dropout(0.5), Linear(256 → 2). The input dimension of the first linear layer is adjusted automatically based on the selected backbone.
+
+Training uses an Adam optimiser with differential learning rates: 1×10⁻⁵ for the pretrained encoder layers and 1×10⁻⁴ for the new classifier head. This asymmetry preserves the pretrained feature representations during early training while allowing the classifier to adapt rapidly. A CosineAnnealingLR scheduler reduces the learning rate smoothly across training epochs, encouraging stable convergence rather than oscillation around a local minimum.
+
+Multi-View CNN
+The MultiViewCNN passes both CC and MLO images through a shared pretrained ResNet18 encoder, producing a 512-dimensional feature vector for each view. These vectors are concatenated to form a 1024-dimensional joint representation, which is passed to a fully connected classifier (Linear 1024→256, ReLU, Dropout 0.5, Linear 256→2).
+
+The shared encoder maps both views into the same feature space before fusion, reducing the total number of trainable parameters compared with separate branches. The concatenation fusion strategy is deliberately minimal, directly addressing the research question of whether providing both views to the network — without explicitly modelling inter-view relationships — is itself sufficient to improve classification over single-view analysis.
+
+Knowledge Distillation Pipeline
+A knowledge distillation framework was implemented to investigate whether the multi-view model's combined CC+MLO knowledge can be transferred to single-view models, and whether transfer between different single-view architectures is beneficial. The distillation loss blends hard-label Cross-Entropy loss with a KL-divergence term computed against the teacher's softened probability distribution:
+
+L = α × L_CE(student, y) + (1−α) × T² × KL(softmax(s/T) || softmax(t/T))
+
+Temperature T=4.0 flattens the teacher's output distribution, making the relative probabilities between classes more informative for the student. Blend weight α=0.5 gives equal weight to both terms. This formulation follows the framework introduced by Hinton et al. (2015) and the T² scaling ensures gradient magnitudes remain consistent between the two loss terms.
+
+Three distillation experiments are run sequentially:
+1. Multi-View CNN → ResNet50: the trained multi-view model acts as teacher. The ResNet50 student learns to match the multi-view model's predictions using only CC images at inference, effectively transferring the additional MLO knowledge into a single-view model.
+2. ResNet50 → DenseNet121: cross-architecture distillation from the trained ResNet50 baseline.
+3. ResNet50 → EfficientNet-B0: cross-architecture distillation from the trained ResNet50 baseline.
+
+All student models use the same differential learning rate strategy and CosineAnnealingLR scheduler as the baseline.
+
+Evaluation
+All five models — single-view ResNet50, multi-view CNN, and the three distilled students — are evaluated on the held-out test set using macro-averaged accuracy, precision, recall, and F1-score. A confusion matrix is generated for the multi-view model to illustrate the distribution of true positives, false positives, true negatives, and false negatives. A combined training loss curve plots convergence behaviour for both single-view and multi-view models across epochs. A final summary table collects all results side by side for direct comparison.
+
+Prototype Evaluation
+The implementation successfully delivers a complete and runnable deep learning pipeline covering paired dataset loading, augmented preprocessing, training, and multi-metric evaluation. Several specific improvements distinguish the current implementation from a basic prototype.
+
+Class-weighted loss directly addresses the benign/malignant imbalance identified in the CBIS-DDSM dataset, mitigating the risk of classifiers achieving artificially high accuracy by predicting the majority class. The multi-metric evaluation framework reports precision, recall, and F1-score alongside accuracy, providing the clinically meaningful information needed to assess how the model handles false negatives — missed malignant cases — versus false positives.
+
+The knowledge distillation pipeline is a technically novel contribution. Using the trained multi-view model as a teacher for a single-view student allows a direct empirical investigation of whether multi-view knowledge is transferable to simpler architectures. This produces a richer set of comparisons than a standard single-view versus multi-view evaluation.
+
+However, several limitations affect the fairness and completeness of the current results. The multi-view model uses a shared ResNet18 encoder, which is smaller than the ResNet50, DenseNet121, and EfficientNet-B0 backbones available to the single-view baseline. This architectural asymmetry means that any performance gap between single-view and multi-view models cannot be attributed solely to the use of multiple views — backbone capacity is a confounding factor. Separate encoder branches using equivalent backbone sizes would produce a more controlled comparison.
+
+The fusion strategy remains simple concatenation. As established in the literature review, attention-based fusion (Makram et al., 2026) and transformer-based cross-view attention (Manigrasso et al., 2025) substantially outperform concatenation. Results from the current architecture should therefore be interpreted as a lower bound on what multi-view learning can achieve rather than as a representative performance ceiling.
+
+ROC-AUC has not yet been computed, limiting direct numerical comparability with published benchmarks. Grad-CAM interpretability visualisations are also absent, making it difficult to assess whether the model's decisions correspond to clinically meaningful image regions.
+
+Future Improvements
+The immediate priority is to upgrade the multi-view model to use separate encoder branches with the same backbone options as the single-view baseline (ResNet50, DenseNet121, EfficientNet-B0). This will remove the current architectural asymmetry and allow a fairer controlled comparison between single-view and multi-view approaches.
+
+ROC-AUC computation and ROC curve plotting should be added to the evaluation pipeline to enable direct comparison with published results such as Makram et al. (2026), who report an AUC-ROC of 0.9876 using a ResNet50 backbone with attention-based fusion on CBIS-DDSM.
+
+Attention-based inter-view fusion, inspired by the IVAF module described by Makram et al. (2026), would replace the current concatenation mechanism with an adaptive spatial weighting of CC and MLO feature contributions. Implementing this would allow the project to investigate whether architectural fusion improvements provide additional gains beyond those achievable through the simpler dual-input approach.
+
+Finally, Grad-CAM visualisations would provide qualitative evidence of whether the model attends to lesion regions rather than background tissue or imaging artefacts, improving interpretability and supporting evaluation criterion 13 — critically analysing results with respect to project objectives.
+
+
+References List
+
+Primary Research Papers
+Makram et al. (2026) – Attention-Based Multi-View Fusion
+Makram, M., Aziz, A.S., Saeid, M.M. and Mohamed, M.T., 2026. Breast cancer detection and classification via a robust deep learning approach. Scientific Reports, 16, p.22511. Available at: https://doi.org/10.1038/s41598-026-62255-2
+Manigrasso et al. (2025) – Transformer and Graph-Based Multi-View Architectures
+Manigrasso, F., Milazzo, R., Russo, A.S., Lamberti, F., Strand, F., Pagnani, A. and Morra, L., 2025. Mammography classification with multi-view deep learning techniques: Investigating graph and transformer-based architectures. Medical Image Analysis, 99, p.103320. Available at: https://doi.org/10.1016/j.media.2024.103320
+Lee et al. (2017) – CBIS-DDSM Dataset
+Lee, R.S., Gimenez, F., Hoogi, A. and Rubin, D.L., 2017. Curated breast imaging subset of DDSM. Scientific Data, 4(1), pp.1–9. Available at: https://doi.org/10.1038/sdata.2017.177
+Aly et al. (2022) – CNN Segmentation and Classification
+Aly, G.H., Marey, M., El-Sayed, S.A. and Tolba, M.F., 2022. Deep learning in mammography images segmentation and classification: Automated CNN approach. Ain Shams Engineering Journal, 13(3), 101631. Available at: https://doi.org/10.1016/j.asej.2021.09.012
+Elter et al. (2024) – Robustness of Deep Networks
+Elter, M., Schulz-Wendtland, R. and Wittenberg, T., 2024. Robustness of deep networks for mammography: Replication across public datasets. Journal of Digital Imaging, 37, pp.1–14. Available at: https://doi.org/10.1007/s10278-023-00943-5
+SCREENet (2020)
+Agarwal, R., Diaz, O., Yap, M.H., Llado, X. and Marti, R., 2020. SCREENet: A multi-view deep convolutional neural network for classification of high-resolution synthetic mammographic screening scans. arXiv preprint arXiv:2009.08563. Available at: https://arxiv.org/abs/2009.08563
+Chen et al. (2022)
+Chen, Z., Wei, M., Wang, B. and Li, Y., 2022. Multi-view local co-occurrence and global consistency learning improve mammogram classification generalisation. arXiv preprint arXiv:2209.10478. Available at: https://arxiv.org/abs/2209.10478
+Supporting Papers
+Wang (2024) – Review Paper
+Wang, L., 2024. Mammography with deep learning for breast cancer detection. Frontiers in Oncology, 14, 1281922. Available at: https://doi.org/10.3389/fonc.2024.1281922
+Additional Background Reference 
+World Health Organization, 2024. Breast cancer. Available at: https://www.who.int/news-room/fact-sheets/detail/breast-cancer
+National Cancer Institute, 2024. Breast Cancer Screening. Available at: https://www.cancer.gov
+

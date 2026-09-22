@@ -31,15 +31,15 @@ class TestSim(unittest.TestCase):
         print(dists)
         self.assertIsNotNone(dists)
 
-## uncomment this to test the 
-## multi-threaded sim
-#    def testProc(self):
-#        pop = population.Population(pop_size=20, gene_count=3)
-#        tsim = simulation.ThreadedSim(pool_size=8)
-#        tsim.eval_population(pop, 2400)
-#        dists = [cr.get_distance_travelled() for cr in pop.creatures]
-#        print(dists)
-#        self.assertIsNotNone(dists)
+# uncomment this to test the 
+# multi-threaded sim
+    def testProc(self):
+        pop = population.Population(pop_size=20, gene_count=3)
+        tsim = simulation.ThreadedSim(pool_size=8)
+        tsim.eval_population(pop, 2400)
+        dists = [cr.get_distance_travelled() for cr in pop.creatures]
+        print(dists)
+        self.assertIsNotNone(dists)
 
     def testProcNoThread(self):
         pop = population.Population(pop_size=20, gene_count=3)

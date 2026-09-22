@@ -1,0 +1,903 @@
+
+
+FILE 1 OF 4: cw-envt-gui.py                                               
+GUI-based GA runner with live PyBullet visualisation.                      
+
+# cw-envt-gui.py
+# GUI version of cw-envt-updated.py — runs the GA with live visualisation.
+# Each creature is evaluated in real time so you can watch it move.
+# Runs slower than the headless version; close the window to stop early.
+
+import pybullet as p
+import numpy as np
+import random
+import math
+import os
+import time
+import datetime
+# +++++ NEW: argument parsing, CSV logging, JSON parameter saving
+import argparse
+import csv
+import json
+# +++++ END NEW
+import creature
+import genome
+import population
+
+# Spacebar cycles speed: 0 = REAL-TIME  1 = FAST  2 = TURBO (multi-step)
+TOGGLE_KEY = ord(' ')
+speed_mode = 2  # start in real-time
+
+
+# ── Environment builders ──────────────────────────────────────────────────────
+
+def make_arena(pid, arena_size=50, wall_height=3):
+    wall_thickness = 0.5
+    floor_shape = p.createCollisionShape(
+        p.GEOM_BOX, halfExtents=[arena_size / 2, arena_size / 2, wall_thickness],
+        physicsClientId=pid)
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=floor_shape,
+                      basePosition=[0, 0, -wall_thickness], physicsClientId=pid)
+
+    wall_ns = p.createCollisionShape(
+        p.GEOM_BOX, halfExtents=[arena_size / 2, wall_thickness / 2, wall_height / 2],
+        physicsClientId=pid)
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ns,
+                      basePosition=[0,  arena_size / 2, wall_height / 2], physicsClientId=pid)
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ns,
+                      basePosition=[0, -arena_size / 2, wall_height / 2], physicsClientId=pid)
+
+    wall_ew = p.createCollisionShape(
+        p.GEOM_BOX, halfExtents=[wall_thickness / 2, arena_size / 2, wall_height / 2],
+        physicsClientId=pid)
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ew,
+                      basePosition=[ arena_size / 2, 0, wall_height / 2], physicsClientId=pid)
+    p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_ew,
+                      basePosition=[-arena_size / 2, 0, wall_height / 2], physicsClientId=pid)
+
+
+def load_mountain_urdf(pid):
+    p.loadURDF("shapes/gaussian_pyramid.urdf", [0, 0, -2],
+               p.getQuaternionFromEuler([0, 0, 0]),
+               useFixedBase=1, physicsClientId=pid)
+
+
+# ── Creature simulation ───────────────────────────────────────────────────────
+
+MOUNTAIN_PEAK = np.array([0.0, 0.0, 3.0])
+
+
+def build_base_template_dna(gene_count):
+    """Create a structured starter body DNA to avoid fully random generation-0 morphologies."""
+    spec = genome.Genome.get_gene_spec()
+    dna = np.array(genome.Genome.get_random_genome(len(spec), gene_count), dtype=float)
+
+    idx = {k: spec[k]["ind"] for k in spec}
+    for gi in range(gene_count):
+        g = dna[gi]
+        is_root = (gi == 0)
+        g[idx["link-length"]] = 0.30 if is_root else 0.22
+        g[idx["link-radius"]] = 0.20 if is_root else 0.14
+        g[idx["link-mass"]] = 0.55 if is_root else 0.35
+        g[idx["link-recurrence"]] = 0.0
+        g[idx["joint-parent"]] = 0.0 if is_root else 0.75
+        g[idx["joint-axis-xyz"]] = (gi % 3) / 2.0
+        g[idx["joint-origin-xyz-1"]] = 0.2
+        g[idx["joint-origin-xyz-2"]] = 0.2
+        g[idx["joint-origin-xyz-3"]] = 0.2
+        g[idx["control-waveform"]] = 0.62
+        g[idx["control-amp"]] = 0.45
+        g[idx["control-freq"]] = 0.38
+
+    return np.clip(dna, 0.0, 0.9999)
+
+
+def run_creature_mountain_gui(cr, pid, iterations=4800, label=""):
+    p.resetSimulation(physicsClientId=pid)
+    p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid)
+    p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0, physicsClientId=pid)
+    p.setGravity(0, 0, -10, physicsClientId=pid)
+
+    make_arena(pid)
+    load_mountain_urdf(pid)
+
+    p.resetDebugVisualizerCamera(
+        cameraDistance=40, cameraYaw=35, cameraPitch=-30,
+        cameraTargetPosition=[0, 0, 0], physicsClientId=pid)
+
+    p.addUserDebugText(label, [0, 0, 6], textColorRGB=[1, 1, 1],
+                       textSize=2, physicsClientId=pid)
+
+    # >>>>> CHANGED: filename made unique per OS process to prevent race conditions
+    #        when multiple simulations run concurrently.
+    #        Original: xml_file = 'temp_mountain_gui.urdf'
+    xml_file = f'temp_mountain_gui_{os.getpid()}.urdf'
+    # >>>>> END CHANGE
+    with open(xml_file, 'w') as f:
+        f.write(cr.to_xml())
+
+    try:
+        cid = p.loadURDF(xml_file, physicsClientId=pid)
+    except Exception:
+        return 0.0, 0.0, 0.0
+
+    spawn = [20, -20, 2.5]
+    p.resetBasePositionAndOrientation(cid, spawn, [0, 0, 0, 1], physicsClientId=pid)
+
+    for _ in range(120):
+        p.stepSimulation(physicsClientId=pid)
+    try:
+        start_pos, _ = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
+    except Exception:
+        return 0.0, 0.0, 0.0
+    start_dist = np.linalg.norm(np.array(start_pos) - MOUNTAIN_PEAK)
+    start_z = start_pos[2]
+    prev_dist = start_dist
+
+    motors = cr.get_motors()
+    final_dists = []
+    final_zs = []
+    progress_gain_sum = 0.0
+    progress_loss_sum = 0.0
+    upright_steps = 0
+    fall_count = 0
+    was_fallen = False
+    tilt_stability_sum = 0.0
+    global speed_mode
+
+    sim_step = 0
+    while sim_step < iterations:
+        keys = p.getKeyboardEvents(physicsClientId=pid)
+        if TOGGLE_KEY in keys and keys[TOGGLE_KEY] & p.KEY_WAS_TRIGGERED:
+            speed_mode = (speed_mode + 1) % 3
+            labels = ["REAL-TIME", "FAST", "TURBO (x8 steps)"]
+            print("Speed:", labels[speed_mode])
+
+        if speed_mode == 0:
+            time.sleep(1.0 / 240)
+
+        substeps = 1 if speed_mode < 2 else 8
+        substeps = min(substeps, iterations - sim_step)
+        for _ in range(substeps):
+            p.stepSimulation(physicsClientId=pid)
+            sim_step += 1
+
+            if sim_step % 24 == 0:
+                for jid in range(p.getNumJoints(cid, physicsClientId=pid)):
+                    p.setJointMotorControl2(
+                        cid, jid,
+                        controlMode=p.VELOCITY_CONTROL,
+                        targetVelocity=motors[jid].get_output(),
+                        force=20,
+                        physicsClientId=pid)
+            try:
+                pos, orn = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
+            except Exception:
+                return 0.0, 0.0, 0.0
+
+            cur_dist = np.linalg.norm(np.array(pos) - MOUNTAIN_PEAK)
+            delta_progress = prev_dist - cur_dist
+            if delta_progress > 0:
+                progress_gain_sum += delta_progress
+            else:
+                progress_loss_sum += -delta_progress
+            prev_dist = cur_dist
+
+            roll, pitch, _ = p.getEulerFromQuaternion(orn)
+            upright_now = (abs(roll) < 0.8 and abs(pitch) < 0.8 and pos[2] > 0.35)
+            if upright_now:
+                upright_steps += 1
+
+            tilt_mag = min(1.0, (abs(roll) + abs(pitch)) / math.pi)
+            tilt_stability_sum += (1.0 - tilt_mag)
+
+            fallen_now = pos[2] < 0.2
+            if fallen_now and not was_fallen:
+                fall_count += 1
+            was_fallen = fallen_now
+
+            if sim_step >= iterations - 240:
+                final_dists.append(np.linalg.norm(np.array(pos) - MOUNTAIN_PEAK))
+                final_zs.append(pos[2])
+
+    avg_final_dist = np.mean(final_dists)
+    avg_final_z = np.mean(final_zs)
+    dist_gain = max(0.0, start_dist - avg_final_dist)
+    z_gain = max(0.0, min(avg_final_z, MOUNTAIN_PEAK[2]) - start_z)
+    base_progress = dist_gain + 2.0 * z_gain
+    step_progress = max(0.0, progress_gain_sum - 0.5 * progress_loss_sum)
+
+    xy_disp = np.linalg.norm(np.array(start_pos[:2]) - np.array(pos[:2]))
+    anti_stall_penalty = max(0.0, 1.0 - xy_disp)
+
+    upright_score = upright_steps / iterations
+    fall_score = 1.0 / (1.0 + fall_count)
+    tilt_score = tilt_stability_sum / iterations
+    stability_score = upright_score + fall_score + tilt_score
+    overall_fitness = (base_progress * 3.0) + (step_progress * 0.6) + stability_score - anti_stall_penalty
+
+    return overall_fitness, dist_gain, stability_score
+
+
+# ── GA loop ───────────────────────────────────────────────────────────────────
+
+# >>>>> CHANGED: run_ga signature — added elite_count, point_mutate_rate,
+#        point_mutate_amount, shrink_mutate_rate, grow_mutate_rate, label
+#        to make all key hyperparameters configurable from the command line.
+#        Original: def run_ga(iterations=100, pop_size=50, gene_count=15, ...)
+def run_ga(iterations=100, pop_size=50, gene_count=15,
+           seed_csv=None, seed_fraction=0.4, seed_mutation_rate=0.03,
+           freeze_gene_count=0, use_template_seed=True, max_links=50,
+           elite_count=None, point_mutate_rate=0.1, point_mutate_amount=0.25,
+           shrink_mutate_rate=0.1, grow_mutate_rate=0.1, label=None):
+# >>>>> END CHANGE
+    run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    # >>>>> CHANGED: col_name uses --label if provided, else falls back to run timestamp
+    col_name = label if label else run_id
+    # >>>>> END CHANGE
+    csv_dir = os.path.join("cw-envt-results", run_id)
+    os.makedirs(csv_dir, exist_ok=True)
+    print(f"Saving elites to: {csv_dir}")
+
+    pid = p.connect(p.GUI)
+    pop = population.Population(pop_size=pop_size, gene_count=gene_count)
+    for cr in pop.creatures:
+        cr.max_links = max_links
+
+    # +++++ NEW: save all run parameters to params.json for notebook analysis
+    params = dict(
+        iterations=iterations, pop_size=pop_size, gene_count=gene_count,
+        seed_csv=seed_csv, seed_fraction=seed_fraction,
+        seed_mutation_rate=seed_mutation_rate, freeze_gene_count=freeze_gene_count,
+        use_template_seed=use_template_seed, max_links=max_links,
+        elite_count=elite_count, point_mutate_rate=point_mutate_rate,
+        point_mutate_amount=point_mutate_amount, shrink_mutate_rate=shrink_mutate_rate,
+        grow_mutate_rate=grow_mutate_rate,
+    )
+    with open(os.path.join(csv_dir, "params.json"), "w") as f:
+        json.dump(params, f, indent=2)
+    # +++++ END NEW
+
+    # +++++ NEW: create fitness_log.csv with a single column named after col_name.
+    #        One row is appended per generation inside the main loop below.
+    fitness_log_path = os.path.join(csv_dir, "fitness_log.csv")
+    with open(fitness_log_path, "w", newline="") as f:
+        csv.writer(f).writerow([col_name])
+    # +++++ END NEW
+
+    seed_dna = None
+    if seed_csv and os.path.exists(seed_csv):
+        seed_dna = np.array(genome.Genome.from_csv(seed_csv), dtype=float)
+        seed_n = max(1, int(pop_size * seed_fraction))
+        seed_n = min(seed_n, pop_size)
+        for i in range(seed_n):
+            dna = genome.Genome.point_mutate(seed_dna, rate=seed_mutation_rate, amount=0.1)
+            pop.creatures[i].update_dna(dna)
+        print(f"Seeded {seed_n}/{pop_size} creatures from base genome: {seed_csv}")
+    elif seed_csv:
+        print(f"Seed CSV not found, using fully random init: {seed_csv}")
+    elif use_template_seed:
+        seed_dna = build_base_template_dna(gene_count)
+        seed_n = max(1, int(pop_size * seed_fraction))
+        seed_n = min(seed_n, pop_size)
+        for i in range(seed_n):
+            dna = genome.Genome.point_mutate(seed_dna, rate=seed_mutation_rate, amount=0.1)
+            pop.creatures[i].update_dna(dna)
+        print(f"Seeded {seed_n}/{pop_size} creatures from built-in base template")
+
+    for iteration in range(iterations):
+        fits = []
+        dist_gains = []
+        stability_scores = []
+        for idx, cr in enumerate(pop.creatures):
+            cr.update_dna(cr.dna)
+            label = f"Iteration {iteration}  Creature {idx + 1}/{pop_size}"
+            print(label)
+            overall_fit, dist_gain, stability_score = run_creature_mountain_gui(cr, pid, label=label)
+            fits.append(overall_fit)
+            dist_gains.append(dist_gain)
+            stability_scores.append(stability_score)
+
+        fits = np.array(fits)
+        dist_gains = np.array(dist_gains)
+        stability_scores = np.array(stability_scores)
+        elite_idx = int(np.argmax(fits))
+        elite_links = len(pop.creatures[elite_idx].get_expanded_links())
+        print(f"{iteration}  elite_fitness: {np.round(fits[elite_idx], 3)}"
+              f"  elite_dist_to_peak_gained: {np.round(dist_gains[elite_idx], 3)}"
+              f"  elite_stability: {np.round(stability_scores[elite_idx], 3)}"
+              f"  elite_links: {elite_links}")
+
+        # +++++ NEW: append best fitness for this generation to fitness_log.csv
+        with open(fitness_log_path, "a", newline="") as f:
+            csv.writer(f).writerow([round(float(fits[elite_idx]), 6)])
+        # +++++ END NEW
+
+        fit_map = population.Population.get_fitness_map(fits)
+        new_creatures = []
+        for _ in range(pop_size):
+            p1 = pop.creatures[population.Population.select_parent(fit_map)]
+            p2 = pop.creatures[population.Population.select_parent(fit_map)]
+            dna = genome.Genome.crossover(p1.dna, p2.dna)
+            # >>>>> CHANGED: mutation rates now use the parameterised arguments
+            #        instead of hardcoded values (0.1 / 0.25 / 0.1 / 0.1)
+            dna = genome.Genome.point_mutate(dna, rate=point_mutate_rate, amount=point_mutate_amount)
+            dna = genome.Genome.shrink_mutate(dna, rate=shrink_mutate_rate)
+            dna = genome.Genome.grow_mutate(dna, rate=grow_mutate_rate)
+            # >>>>> END CHANGE
+
+            if seed_dna is not None and freeze_gene_count > 0:
+                lock_n = min(freeze_gene_count, len(dna), len(seed_dna))
+                for gi in range(lock_n):
+                    dna[gi] = np.array(seed_dna[gi], copy=True)
+
+            new_cr = creature.Creature(gene_count, max_links=max_links)
+            new_cr.update_dna(dna)
+            new_creatures.append(new_cr)
+
+        # >>>>> CHANGED: elite_count now uses the parameterised argument if provided,
+        #        otherwise defaults to pop_size // 10.
+        #        Original: elite_count = max(1, pop_size // 5)
+        _elite_count = elite_count if elite_count is not None else max(1, pop_size // 10)
+        elite_indices = np.argsort(fits)[-_elite_count:][::-1]
+        # >>>>> END CHANGE
+        for slot, idx in enumerate(elite_indices):
+            cr = pop.creatures[int(idx)]
+            elite = creature.Creature(gene_count, max_links=max_links)
+            elite.update_dna(cr.dna)
+            new_creatures[slot] = elite
+            filename = os.path.join(csv_dir, f"elite_{iteration}_{slot}.csv")
+            genome.Genome.to_csv(cr.dna, filename)
+
+        pop.creatures = new_creatures
+
+    p.disconnect(pid)
+    print("Evolution complete. Number of generations:", iterations,
+          "Population size:", pop_size, "Gene count:", gene_count, "Max links:", max_links)
+
+
+# +++++ NEW: argparse block — replaces bare run_ga() call so all parameters
+#        can be passed from the command line, enabling parallel experiments
+#        with different settings in separate terminals.
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the creature GA simulation (GUI mode).")
+    parser.add_argument("--iterations",           type=int,   default=50,   help="Number of GA generations")
+    parser.add_argument("--pop-size",             type=int,   default=10,   help="Population size")
+    parser.add_argument("--gene-count",           type=int,   default=10,   help="Genes per creature")
+    parser.add_argument("--seed-csv",             type=str,   default=None, help="Path to a seed genome CSV")
+    parser.add_argument("--seed-fraction",        type=float, default=0.4,  help="Fraction of pop seeded from CSV")
+    parser.add_argument("--seed-mutation-rate",   type=float, default=0.03, help="Mutation rate applied to seed")
+    parser.add_argument("--freeze-gene-count",    type=int,   default=0,    help="Number of leading genes to freeze")
+    parser.add_argument("--no-template-seed",     action="store_false", dest="use_template_seed",
+                        help="Disable the built-in template seed")
+    parser.add_argument("--max-links",            type=int,   default=50,   help="Max links per creature")
+    parser.add_argument("--elite-count",          type=int,   default=None, help="Elites kept per iteration (default: pop_size // 10)")
+    parser.add_argument("--point-mutate-rate",    type=float, default=0.1,  help="Point mutation rate")
+    parser.add_argument("--point-mutate-amount",  type=float, default=0.25, help="Point mutation amount")
+    parser.add_argument("--shrink-mutate-rate",   type=float, default=0.1,  help="Shrink mutation rate")
+    parser.add_argument("--grow-mutate-rate",     type=float, default=0.1,  help="Grow mutation rate")
+    parser.add_argument("--label",                type=str,   default=None, help="Column name for fitness_log.csv")
+    args = parser.parse_args()
+
+    run_ga(
+        iterations=args.iterations,
+        pop_size=args.pop_size,
+        gene_count=args.gene_count,
+        seed_csv=args.seed_csv,
+        seed_fraction=args.seed_fraction,
+        seed_mutation_rate=args.seed_mutation_rate,
+        freeze_gene_count=args.freeze_gene_count,
+        use_template_seed=args.use_template_seed,
+        max_links=args.max_links,
+        elite_count=args.elite_count,
+        point_mutate_rate=args.point_mutate_rate,
+        point_mutate_amount=args.point_mutate_amount,
+        shrink_mutate_rate=args.shrink_mutate_rate,
+        grow_mutate_rate=args.grow_mutate_rate,
+        label=args.label,
+    )
+# +++++ END NEW
+
+
+
+
+FILE 2 OF 4: creature.py                                                   
+Creature and Motor classes. Motor was significantly enhanced;              
+Creature gained a max_links parameter.                                     
+
+
+import genome
+from xml.dom.minidom import getDOMImplementation
+from enum import Enum
+import numpy as np
+
+# +++++ NEW: MotorType enum — original code had only a single pulse-based output.
+#        Six waveform types are now available and blended via _weights().
+class MotorType(Enum):
+    PULSE = 1
+    SINE = 2
+    TRIANGLE = 3
+    SAW = 4
+    RANDOM_WALK = 5
+    BURST = 6
+# +++++ END NEW
+
+class Motor:
+    # >>>>> CHANGED: __init__ now stores base_amp / base_freq (scaled from raw
+    #        gene values) and initialises fatigue + random_state for adaptive
+    #        control. Original stored control_waveform, control_amp, control_freq
+    #        directly with no scaling.
+    def __init__(self, control_waveform, control_amp, control_freq):
+        self.control_waveform = float(np.clip(control_waveform, 0.0, 1.0))
+        self.base_amp = 0.5 + float(np.clip(control_amp, 0.5, 1.0))
+        self.base_freq = 0.05 + 0.75 * float(np.clip(control_freq, 0.0, 1.0))
+        self.phase = 0
+        self.random_state = 0.0
+        self.fatigue = 0.0
+        self.waveforms = [
+            MotorType.PULSE, MotorType.SINE, MotorType.TRIANGLE,
+            MotorType.SAW, MotorType.RANDOM_WALK, MotorType.BURST,
+        ]
+    # >>>>> END CHANGE
+
+    # +++++ NEW: _weights() — maps the continuous control_waveform gene value to
+    #        a weighted blend of waveform types, enabling smooth morphing between
+    #        motor behaviours during evolution.
+    def _weights(self):
+        w = self.control_waveform
+        if w <= 0.45:
+            return [(MotorType.PULSE, 1.0)]
+        if w < 0.55:
+            t = (w - 0.45) / 0.10
+            return [(MotorType.PULSE, 1.0 - t), (MotorType.SINE, t)]
+        if w <= 0.70:
+            return [(MotorType.SINE, 1.0)]
+        if w < 0.80:
+            t = (w - 0.70) / 0.10
+            return [(MotorType.SINE, 1.0 - t), (MotorType.TRIANGLE, t)]
+        if w <= 0.88:
+            return [(MotorType.TRIANGLE, 1.0)]
+        if w < 0.94:
+            t = (w - 0.88) / 0.06
+            return [(MotorType.TRIANGLE, 1.0 - t), (MotorType.SAW, t)]
+        if w <= 0.97:
+            return [(MotorType.SAW, 1.0)]
+        if w < 0.99:
+            t = (w - 0.97) / 0.02
+            return [(MotorType.SAW, 1.0 - t), (MotorType.RANDOM_WALK, t)]
+        t = (w - 0.99) / 0.01
+        return [(MotorType.RANDOM_WALK, 1.0 - t), (MotorType.BURST, t)]
+    # +++++ END NEW
+
+    # +++++ NEW: _wave_output() — computes the raw output value for each
+    #        individual waveform type given the current phase.
+    def _wave_output(self, wave_type):
+        if wave_type == MotorType.PULSE:
+            return 1.0 if self.phase < np.pi else -1.0
+        if wave_type == MotorType.SINE:
+            return float(np.sin(self.phase))
+        if wave_type == MotorType.TRIANGLE:
+            return float((2.0 / np.pi) * np.arcsin(np.sin(self.phase)))
+        if wave_type == MotorType.SAW:
+            return float((self.phase / np.pi) - 1.0)
+        if wave_type == MotorType.RANDOM_WALK:
+            self.random_state = 0.95 * self.random_state + 0.05 * np.random.uniform(-1.0, 1.0)
+            self.random_state = float(np.clip(self.random_state, -1.0, 1.0))
+            return self.random_state
+        phi = self.phase / (2.0 * np.pi)
+        if phi < 0.12:
+            return 1.0
+        if phi < 0.24:
+            return -1.0
+        if phi < 0.36:
+            return 0.6
+        return 0.0
+    # +++++ END NEW
+
+    # >>>>> CHANGED: get_output() now uses adaptive amplitude/frequency based on
+    #        a fatigue accumulator, blends multiple waveforms via _weights() and
+    #        _wave_output(), and adds a small exploratory perturbation.
+    #        Original: simple sine/pulse output with fixed amp and freq.
+    def get_output(self):
+        energy = 1.0 - self.fatigue
+        adaptive_amp = self.base_amp * (0.5 + 1.0 * energy)
+        adaptive_freq = self.base_freq * (0.7 + 0.6 * energy)
+        adaptive_freq = max(0.02, adaptive_freq)
+
+        self.phase = (self.phase + adaptive_freq) % (np.pi * 2)
+
+        output = 0.0
+        for wave_type, weight in self._weights():
+            output += weight * self._wave_output(wave_type)
+
+        output += 0.05 * self.random_state
+        output *= adaptive_amp
+        output = float(np.clip(output, -5.0, 5.0))
+
+        self.fatigue = float(np.clip(self.fatigue + 0.015 * abs(output) - 0.005, 0.0, 1.0))
+        return output
+    # >>>>> END CHANGE
+
+
+class Creature:
+    # >>>>> CHANGED: added max_links=None parameter to cap body complexity.
+    #        Original: def __init__(self, gene_count)
+    def __init__(self, gene_count, max_links=None):
+        self.spec = genome.Genome.get_gene_spec()
+        self.dna = genome.Genome.get_random_genome(len(self.spec), gene_count)
+        self.max_links = max_links
+        self.flat_links = None
+        self.exp_links = None
+        self.motors = None
+        self.start_position = None
+        self.last_position = None
+    # >>>>> END CHANGE
+
+    def get_flat_links(self):
+        if self.flat_links == None:
+            gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)
+            self.flat_links = genome.Genome.genome_to_links(gdicts)
+        return self.flat_links
+
+    # >>>>> CHANGED: passes self.max_links into expandLinks so the body link
+    #        count is capped at runtime. Original did not pass max_links.
+    def get_expanded_links(self):
+        self.get_flat_links()
+        if self.exp_links is not None:
+            return self.exp_links
+        exp_links = [self.flat_links[0]]
+        genome.Genome.expandLinks(self.flat_links[0],
+                                  self.flat_links[0].name,
+                                  self.flat_links,
+                                  exp_links,
+                                  max_links=self.max_links)
+        self.exp_links = exp_links
+        return self.exp_links
+    # >>>>> END CHANGE
+
+    def to_xml(self):
+        self.get_expanded_links()
+        domimpl = getDOMImplementation()
+        adom = domimpl.createDocument(None, "start", None)
+        robot_tag = adom.createElement("robot")
+        for link in self.exp_links:
+            robot_tag.appendChild(link.to_link_element(adom))
+        first = True
+        for link in self.exp_links:
+            if first:
+                first = False
+                continue
+            robot_tag.appendChild(link.to_joint_element(adom))
+        robot_tag.setAttribute("name", "pepe")
+        return '<?xml version="1.0"?>' + robot_tag.toprettyxml()
+
+    def get_motors(self):
+        self.get_expanded_links()
+        if self.motors == None:
+            motors = []
+            for i in range(1, len(self.exp_links)):
+                l = self.exp_links[i]
+                m = Motor(l.control_waveform, l.control_amp, l.control_freq)
+                motors.append(m)
+            self.motors = motors
+        return self.motors
+
+    def update_position(self, pos):
+        if self.start_position == None:
+            self.start_position = pos
+        else:
+            self.last_position = pos
+
+    def get_distance_travelled(self):
+        if self.start_position is None or self.last_position is None:
+            return 0
+        p1 = np.asarray(self.start_position)
+        p2 = np.asarray(self.last_position)
+        return np.linalg.norm(p1 - p2)
+
+    def update_dna(self, dna):
+        self.dna = dna
+        self.flat_links = None
+        self.exp_links = None
+        self.motors = None
+        self.start_position = None
+
+
+
+
+FILE 3 OF 4: genome.py                                                     
+UNCHANGED FROM STARTER CODE                                                
+
+import numpy as np
+import copy
+import random
+
+class Genome():
+    @staticmethod
+    def get_random_gene(length):
+        gene = np.array([np.random.random() for i in range(length)])
+        return gene
+
+    @staticmethod
+    def get_random_genome(gene_length, gene_count):
+        genome = [Genome.get_random_gene(gene_length) for i in range(gene_count)]
+        return genome
+
+    @staticmethod
+    def get_gene_spec():
+        gene_spec = {"link-shape":         {"scale": 1},
+                     "link-length":        {"scale": 2},
+                     "link-radius":        {"scale": 1},
+                     "link-recurrence":    {"scale": 3},
+                     "link-mass":          {"scale": 1},
+                     "joint-type":         {"scale": 1},
+                     "joint-parent":       {"scale": 1},
+                     "joint-axis-xyz":     {"scale": 1},
+                     "joint-origin-rpy-1": {"scale": np.pi * 2},
+                     "joint-origin-rpy-2": {"scale": np.pi * 2},
+                     "joint-origin-rpy-3": {"scale": np.pi * 2},
+                     "joint-origin-xyz-1": {"scale": 1},
+                     "joint-origin-xyz-2": {"scale": 1},
+                     "joint-origin-xyz-3": {"scale": 1},
+                     "control-waveform":   {"scale": 1},
+                     "control-amp":        {"scale": 0.25},
+                     "control-freq":       {"scale": 1}}
+        ind = 0
+        for key in gene_spec.keys():
+            gene_spec[key]["ind"] = ind
+            ind += 1
+        return gene_spec
+
+    @staticmethod
+    def get_gene_dict(gene, spec):
+        gdict = {}
+        for key in spec:
+            ind = spec[key]["ind"]
+            scale = spec[key]["scale"]
+            gdict[key] = gene[ind] * scale
+        return gdict
+
+    @staticmethod
+    def get_genome_dicts(genome, spec):
+        gdicts = []
+        for gene in genome:
+            gdicts.append(Genome.get_gene_dict(gene, spec))
+        return gdicts
+
+    @staticmethod
+    def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links, max_links=None):
+        if max_links is not None and len(exp_links) >= max_links:
+            return
+        children = [l for l in flat_links if l.parent_name == parent_link.name]
+        sibling_ind = 1
+        for c in children:
+            for r in range(int(c.recur)):
+                if max_links is not None and len(exp_links) >= max_links:
+                    return
+                sibling_ind += 1
+                c_copy = copy.copy(c)
+                c_copy.parent_name = uniq_parent_name
+                uniq_name = c_copy.name + str(len(exp_links))
+                c_copy.name = uniq_name
+                c_copy.sibling_ind = sibling_ind
+                exp_links.append(c_copy)
+                assert c.parent_name != c.name
+                Genome.expandLinks(c, uniq_name, flat_links, exp_links, max_links=max_links)
+
+    @staticmethod
+    def genome_to_links(gdicts):
+        links = []
+        link_ind = 0
+        parent_names = [str(link_ind)]
+        for gdict in gdicts:
+            link_name = str(link_ind)
+            parent_ind = gdict["joint-parent"] * len(parent_names)
+            parent_name = parent_names[int(parent_ind)]
+            recur = gdict["link-recurrence"]
+            link = URDFLink(name=link_name, parent_name=parent_name, recur=recur + 1,
+                            link_length=gdict["link-length"], link_radius=gdict["link-radius"],
+                            link_mass=gdict["link-mass"], joint_type=gdict["joint-type"],
+                            joint_parent=gdict["joint-parent"], joint_axis_xyz=gdict["joint-axis-xyz"],
+                            joint_origin_rpy_1=gdict["joint-origin-rpy-1"],
+                            joint_origin_rpy_2=gdict["joint-origin-rpy-2"],
+                            joint_origin_rpy_3=gdict["joint-origin-rpy-3"],
+                            joint_origin_xyz_1=gdict["joint-origin-xyz-1"],
+                            joint_origin_xyz_2=gdict["joint-origin-xyz-2"],
+                            joint_origin_xyz_3=gdict["joint-origin-xyz-3"],
+                            control_waveform=gdict["control-waveform"],
+                            control_amp=gdict["control-amp"],
+                            control_freq=gdict["control-freq"])
+            links.append(link)
+            if link_ind != 0:
+                parent_names.append(link_name)
+            link_ind += 1
+        links[0].parent_name = "None"
+        return links
+
+    @staticmethod
+    def crossover(g1, g2):
+        x1 = random.randint(0, len(g1) - 1)
+        x2 = random.randint(0, len(g2) - 1)
+        g3 = np.concatenate((g1[x1:], g2[x2:]))
+        if len(g3) > len(g1):
+            g3 = g3[0:len(g1)]
+        return g3
+
+    @staticmethod
+    def point_mutate(genome, rate, amount):
+        new_genome = copy.copy(genome)
+        for gene in new_genome:
+            for i in range(len(gene)):
+                if random.random() < rate:
+                    gene[i] += 0.1
+                if gene[i] >= 1.0:
+                    gene[i] = 0.9999
+                if gene[i] < 0.0:
+                    gene[i] = 0.0
+        return new_genome
+
+    @staticmethod
+    def shrink_mutate(genome, rate):
+        if len(genome) == 1:
+            return copy.copy(genome)
+        if random.random() < rate:
+            ind = random.randint(0, len(genome) - 1)
+            return np.delete(genome, ind, 0)
+        return copy.copy(genome)
+
+    @staticmethod
+    def grow_mutate(genome, rate):
+        if random.random() < rate:
+            gene = Genome.get_random_gene(len(genome[0]))
+            new_genome = copy.copy(genome)
+            return np.append(new_genome, [gene], axis=0)
+        return copy.copy(genome)
+
+    @staticmethod
+    def to_csv(dna, csv_file):
+        csv_str = ""
+        for gene in dna:
+            for val in gene:
+                csv_str += str(val) + ","
+            csv_str += '\n'
+        with open(csv_file, 'w') as f:
+            f.write(csv_str)
+
+    @staticmethod
+    def from_csv(filename):
+        with open(filename) as f:
+            csv_str = f.read()
+        dna = []
+        for line in csv_str.split('\n'):
+            vals = line.split(',')
+            gene = [float(v) for v in vals if v != '']
+            if len(gene) > 0:
+                dna.append(gene)
+        return dna
+
+
+class URDFLink:
+    def __init__(self, name, parent_name, recur,
+                 link_length=0.1, link_radius=0.1, link_mass=0.1,
+                 joint_type=0.1, joint_parent=0.1, joint_axis_xyz=0.1,
+                 joint_origin_rpy_1=0.1, joint_origin_rpy_2=0.1, joint_origin_rpy_3=0.1,
+                 joint_origin_xyz_1=0.1, joint_origin_xyz_2=0.1, joint_origin_xyz_3=0.1,
+                 control_waveform=0.1, control_amp=0.1, control_freq=0.1):
+        self.name = name
+        self.parent_name = parent_name
+        self.recur = recur
+        self.link_length = link_length
+        self.link_radius = link_radius
+        self.link_mass = link_mass
+        self.joint_type = joint_type
+        self.joint_parent = joint_parent
+        self.joint_axis_xyz = joint_axis_xyz
+        self.joint_origin_rpy_1 = joint_origin_rpy_1
+        self.joint_origin_rpy_2 = joint_origin_rpy_2
+        self.joint_origin_rpy_3 = joint_origin_rpy_3
+        self.joint_origin_xyz_1 = joint_origin_xyz_1
+        self.joint_origin_xyz_2 = joint_origin_xyz_2
+        self.joint_origin_xyz_3 = joint_origin_xyz_3
+        self.control_waveform = control_waveform
+        self.control_amp = control_amp
+        self.control_freq = control_freq
+        self.sibling_ind = 1
+
+    def to_link_element(self, adom):
+        link_tag = adom.createElement("link")
+        link_tag.setAttribute("name", self.name)
+        vis_tag = adom.createElement("visual")
+        geom_tag = adom.createElement("geometry")
+        cyl_tag = adom.createElement("cylinder")
+        cyl_tag.setAttribute("length", str(self.link_length))
+        cyl_tag.setAttribute("radius", str(self.link_radius))
+        geom_tag.appendChild(cyl_tag)
+        vis_tag.appendChild(geom_tag)
+        coll_tag = adom.createElement("collision")
+        c_geom_tag = adom.createElement("geometry")
+        c_cyl_tag = adom.createElement("cylinder")
+        c_cyl_tag.setAttribute("length", str(self.link_length))
+        c_cyl_tag.setAttribute("radius", str(self.link_radius))
+        c_geom_tag.appendChild(c_cyl_tag)
+        coll_tag.appendChild(c_geom_tag)
+        inertial_tag = adom.createElement("inertial")
+        mass_tag = adom.createElement("mass")
+        mass = np.pi * (self.link_radius ** 2) * self.link_length
+        mass_tag.setAttribute("value", str(mass))
+        inertia_tag = adom.createElement("inertia")
+        inertia_tag.setAttribute("ixx", "0.03")
+        inertia_tag.setAttribute("iyy", "0.03")
+        inertia_tag.setAttribute("izz", "0.03")
+        inertia_tag.setAttribute("ixy", "0")
+        inertia_tag.setAttribute("ixz", "0")
+        inertia_tag.setAttribute("iyx", "0")
+        inertial_tag.appendChild(mass_tag)
+        inertial_tag.appendChild(inertia_tag)
+        link_tag.appendChild(vis_tag)
+        link_tag.appendChild(coll_tag)
+        link_tag.appendChild(inertial_tag)
+        return link_tag
+
+    def to_joint_element(self, adom):
+        joint_tag = adom.createElement("joint")
+        joint_tag.setAttribute("name", self.name + "_to_" + self.parent_name)
+        joint_tag.setAttribute("type", "revolute")
+        parent_tag = adom.createElement("parent")
+        parent_tag.setAttribute("link", self.parent_name)
+        child_tag = adom.createElement("child")
+        child_tag.setAttribute("link", self.name)
+        axis_tag = adom.createElement("axis")
+        if self.joint_axis_xyz <= 0.33:
+            axis_tag.setAttribute("xyz", "1 0 0")
+        elif self.joint_axis_xyz <= 0.66:
+            axis_tag.setAttribute("xyz", "0 1 0")
+        else:
+            axis_tag.setAttribute("xyz", "0 0 1")
+        limit_tag = adom.createElement("limit")
+        limit_tag.setAttribute("effort", "1")
+        limit_tag.setAttribute("upper", "-3.1415")
+        limit_tag.setAttribute("lower", "3.1415")
+        limit_tag.setAttribute("velocity", "1")
+        orig_tag = adom.createElement("origin")
+        rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
+        orig_tag.setAttribute("rpy", f"{rpy1} {self.joint_origin_rpy_2} {self.joint_origin_rpy_3}")
+        orig_tag.setAttribute("xyz", f"{self.joint_origin_xyz_1} {self.joint_origin_xyz_2} {self.joint_origin_xyz_3}")
+        joint_tag.appendChild(parent_tag)
+        joint_tag.appendChild(child_tag)
+        joint_tag.appendChild(axis_tag)
+        joint_tag.appendChild(limit_tag)
+        joint_tag.appendChild(orig_tag)
+        return joint_tag
+
+
+
+
+
+FILE 4 OF 4: population.py                                                 
+UNCHANGED FROM STARTER CODE                                                
+
+import creature
+import numpy as np
+
+class Population:
+    def __init__(self, pop_size, gene_count):
+        self.creatures = [creature.Creature(gene_count=gene_count)
+                          for i in range(pop_size)]
+
+    @staticmethod
+    def get_fitness_map(fits):
+        fitmap = []
+        total = 0
+        for f in fits:
+            total += f
+            fitmap.append(total)
+        return fitmap
+
+    @staticmethod
+    def select_parent(fitmap):
+        r = np.random.rand()
+        r = r * fitmap[-1]
+        for i in range(len(fitmap)):
+            if r <= fitmap[i]:
+                return i
+
