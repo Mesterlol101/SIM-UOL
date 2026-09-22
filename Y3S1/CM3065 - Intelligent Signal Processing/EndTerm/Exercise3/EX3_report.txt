@@ -1,0 +1,27 @@
+Report (~500 words)
+
+Coursera notebook link : https://hub.labs.coursera.org:443/connect/sharedrnikcohk?forceRefresh=false&sessionMigrationMode=shadow
+
+Brief configuration note
+`ffprobe` and `ffmpeg` are required command-line tools from FFmpeg. In this notebook they are accessed programmatically via Python `subprocess`, using `ffprobe` for metadata extraction and `ffmpeg` for conversion. The setup cell checks availability on PATH and stops early if tools are missing.
+
+Brief analysis of the application
+This application automates the technical compliance workflow for festival submissions. It performs three connected tasks: metadata examination, non-compliance reporting, and enforced conversion. First, every file in the input folder is inspected with `ffprobe` and parsed into explicit technical fields. Second, each field is compared against the required specification (container, video/audio codecs, frame rate, aspect ratio, resolution, video bitrate range, audio bitrate limit, and stereo channels). The notebook then writes a TXT report that identifies each non-compliant title and lists the exact problematic fields. Third, every non-compliant file is converted to a new copy whose filename ends in `_formatOK.mp4`, then re-checked with `ffprobe` to confirm that conversion succeeded.
+
+This design avoids manual inspection and enforces repeatable decisions. It is robust for batches because the same rule set is applied consistently to all videos. It also preserves traceability: both pre-conversion failures and post-conversion status are explicit, so reviewers can verify the pipeline outcomes quickly.
+
+Technical terms (required)
+- Container (format): The outer file wrapper (e.g., MP4) that holds encoded streams and metadata.
+- Video codec: Algorithm used to compress/decompress the video stream (required: H.264 / `h264`).
+- Audio codec: Algorithm used for audio compression/decompression (required: AAC / `aac`).
+- Frame rate (fps): Number of video frames displayed per second (required: 25 fps).
+- Aspect ratio: Proportional relationship between width and height (required: 16:9).
+- Resolution: Pixel dimensions of each frame (required: 640 x 360).
+- Video bitrate: Bits per second assigned to video stream quality (required range: 2-5 Mb/s).
+- Audio bitrate: Bits per second for audio stream quality (required: up to 256 kb/s).
+- Audio channels: Number of independent audio channels (required: stereo, i.e., 2 channels).
+
+Why this approach is effective and how to enhance it
+The strongest part of this solution is deterministic checking with explicit thresholds. Instead of relying on defaults, conversion parameters are fully specified (`libx264`, `aac`, 25 fps, 640x360, bitrate constraints, stereo), which directly aligns with the assignment tips. Post-conversion validation closes the loop and ensures outputs truly satisfy requirements.
+
+Potential improvements include: adding tolerance windows configurable per festival edition, exporting report data to CSV/JSON in addition to TXT, and including visual quality checks (e.g., VMAF/PSNR) when strict bitrate constraints are required across diverse source materials. Nonetheless, for this coursework scope, the implemented pipeline is complete, automated, and aligned with all specified technical constraints.

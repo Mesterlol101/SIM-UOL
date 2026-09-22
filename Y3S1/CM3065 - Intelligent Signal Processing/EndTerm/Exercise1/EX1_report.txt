@@ -1,0 +1,34 @@
+Report (Task 2) - ~500 words
+
+Results table
+
+| Video | Total number of cars (Downtown -> City centre) | Cars per minute |
+|---|---:|---:|
+| Traffic_Laramie_1.mp4 | 8 | 2.70 |
+| Traffic_Laramie_2.mp4 | 4 | 2.27 |
+
+Brief analysis of the application
+This application counts only vehicles moving from downtown to city centre by combining motion segmentation, spatial filtering, and simple multi-object tracking. The practical workflow is: (1) isolate motion candidates, (2) keep only blobs inside a main-street region of interest (ROI), (3) track each vehicle with a persistent ID using centroid matching, and (4) increment the counter once when a tracked centroid crosses the counting line in the correct direction. This direction rule is essential because traffic appears from multiple directions in the scene. Without directional logic, the same system would count irrelevant movement or mixed traffic flows.
+
+The generated results show that Traffic_Laramie_1.mp4 contains a larger downtown-to-city-centre flow than Traffic_Laramie_2.mp4 within the observed intervals. The per-minute normalization is useful because it compares traffic intensity fairly even when video durations differ. In practical deployment, this rate-based metric is more informative than raw totals alone because it supports direct peak-hour comparisons across multiple recordings.
+
+Frame differencing and background subtraction
+Frame differencing computes motion as a pixel-wise absolute difference between consecutive frames:
+
+D_t(x,y) = |I_t(x,y) - I_{t-1}(x,y)|
+
+If a region changes significantly over time, it appears bright in the difference mask. This is computationally light and reacts quickly to movement, but it is sensitive to noise and small camera/illumination variations.
+
+Background subtraction (MOG2) models the scene background and classifies each pixel as background or foreground over time. It is better at separating persistent static structure (buildings, road markings) from moving objects. However, it may produce ghost artifacts when lighting changes abruptly or when objects pause for long periods.
+
+In this notebook, both techniques are fused by combining their binary masks. This reduces missed detections: frame differencing captures immediate temporal changes, while background subtraction provides scene-level foreground modeling. Before segmentation, Gaussian blur suppresses high-frequency noise; after segmentation, morphological open/close operations reduce isolated blobs and fill small holes.
+
+Strengths, weaknesses, and failure scenarios
+Strengths include low computational cost, interpretable processing stages, and easy adaptation to fixed-camera traffic scenes. ROI restriction and contour-size filtering significantly reduce non-vehicle detections. Centroid-based tracking helps avoid duplicate counts by ensuring each vehicle is counted once.
+
+Weaknesses remain: the tracker is a nearest-neighbour association model, so identity switches can occur in dense congestion or heavy occlusion. A single global threshold may underperform under strong weather or illumination shifts. Perspective variation can also change apparent vehicle size, which affects contour filtering.
+
+Failure scenarios include overlapping vehicles, abrupt shadows, reflections, and temporary stop-and-go patterns near the counting line. These conditions can split or merge blobs and cause under- or over-counting. The current implementation mitigates these effects but cannot fully remove them in all cases.
+
+Alternative state-of-the-art approach
+A stronger alternative is detector-based tracking (for example, YOLO + ByteTrack/DeepSORT). A deep detector can classify cars more robustly under variable lighting and complex backgrounds, while modern trackers maintain identity through partial occlusion. This approach usually improves counting accuracy, especially in crowded scenes, but it requires more computation, model files, and parameter tuning. For this assignment, the current classical approach is appropriate because it is lightweight, transparent, and directly aligned with the required frame-differencing and background-subtraction methods.

@@ -1,0 +1,27 @@
+Exercise 3 - Video Format Compliance Report
+==============================================
+
+Total videos examined: 5
+Videos with incorrect format: 5
+
+Videos that do not meet the required format and problematic fields:
+
+- Cosmos_War_of_the_Planets.mp4
+  Problematic fields: frame rate, resolution, audio bit rate
+  Metadata: container=mov,mp4,m4a,3gp,3g2,mj2 | vcodec=h264 | acodec=aac | fps=29.970 | res=628x354 | vbitrate=2989377 | abitrate=317103 | channels=2
+
+- Last_man_on_earth_1964.mov
+  Problematic fields: video codec, audio codec, frame rate, video bit rate, audio bit rate
+  Metadata: container=mov,mp4,m4a,3gp,3g2,mj2 | vcodec=prores | acodec=pcm_s16le | fps=23.976 | res=640x360 | vbitrate=9285191 | abitrate=1536000 | channels=2
+
+- The_Gun_and_the_Pulpit.avi
+  Problematic fields: container, video codec, audio codec, resolution, video bit rate, audio bit rate
+  Metadata: container=avi | vcodec=rawvideo | acodec=pcm_s16le | fps=25.000 | res=720x404 | vbitrate=87438878 | abitrate=1536000 | channels=2
+
+- The_Hill_Gang_Rides_Again.mp4
+  Problematic fields: video bit rate
+  Metadata: container=mov,mp4,m4a,3gp,3g2,mj2 | vcodec=h264 | acodec=aac | fps=25.000 | res=640x360 | vbitrate=7537730 | abitrate=253272 | channels=2
+
+- Voyage_to_the_Planet_of_Prehistoric_Women.mp4
+  Problematic fields: video codec, audio codec, frame rate, video bit rate, audio bit rate
+  Metadata: container=mov,mp4,m4a,3gp,3g2,mj2 | vcodec=hevc | acodec=mp3 | fps=29.970 | res=640x360 | vbitrate=8038857 | abitrate=320000 | channels=2
